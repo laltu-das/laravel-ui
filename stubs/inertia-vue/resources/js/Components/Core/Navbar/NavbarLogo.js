@@ -1,32 +1,30 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h } from "vue"
 
 export default defineComponent({
-    name: 'NavbarLogo',
+    name: "NavbarLogo",
     props: {
         link: {
             type: String,
-            default: '/',
+            default: "/"
         },
         imageUrl: {
             type: String,
-            default: '/assets/logo.svg',
+            default: "/assets/logo.svg"
         },
         alt: {
             type: String,
-            default: 'Logo',
+            default: "Logo"
         },
         component: {
             type: [Object, String],
-            default: 'a',
+            default: "a"
         },
         linkAttr: {
             type: String,
-            default: 'href',
-        },
+            default: "href"
+        }
     },
-    emits: [
-        'click',
-    ],
+    emits: ["click"],
     setup(props, { slots }) {
         return () =>
             h(
@@ -35,26 +33,25 @@ export default defineComponent({
                 props.component,
                 {
                     [props.linkAttr]: props.link,
-                    class: 'flex items-center',
+                    class: "flex items-center"
                 },
                 {
                     default: () => [
+                        h("img", {
+                            src: props.imageUrl,
+                            class: "mr-3 h-6 sm:h-10",
+                            alt: props.alt
+                        }),
                         h(
-                            'img',
+                            "span",
                             {
-                                src: props.imageUrl,
-                                class: 'mr-3 h-6 sm:h-10',
-                                alt: props.alt,
+                                class:
+                                    "self-center text-xl font-semibold whitespace-nowrap dark:text-white"
                             },
-                        ),
-                        h(
-                            'span',
-                            {
-                                class: 'self-center text-xl font-semibold whitespace-nowrap dark:text-white',
-                            },
-                            slots,
-                        )],
-                },
+                            slots
+                        )
+                    ]
+                }
             )
-    },
+    }
 })

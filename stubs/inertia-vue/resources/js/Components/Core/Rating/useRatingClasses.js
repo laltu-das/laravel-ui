@@ -1,28 +1,18 @@
-import type { Ref } from 'vue'
-import { computed } from 'vue'
-import classNames from 'classnames'
-import type { RatingSize } from './types'
+import { computed } from "vue"
+import classNames from "classnames"
 
-const ratingSizeClasses: Record<RatingSize, string> = {
-  sm: 'w-5 h-5',
-  md: 'w-7 h-7',
-  lg: 'w-10 h-10',
+const ratingSizeClasses = {
+  sm: "w-5 h-5",
+  md: "w-7 h-7",
+  lg: "w-10 h-10"
 }
 
-export type UseRatingClassesProps = {
-  size: Ref<RatingSize>
-}
-
-export function useRatingClasses(props: UseRatingClassesProps):{
-  sizeClasses: Ref<string>
-}{
+export function useRatingClasses(props) {
   const sizeClasses = computed(() => {
-    return classNames(
-        ratingSizeClasses[props.size.value] ?? '',
-    )
+    return classNames(ratingSizeClasses[props.size.value] ?? "")
   })
 
   return {
-    sizeClasses,
+    sizeClasses
   }
 }

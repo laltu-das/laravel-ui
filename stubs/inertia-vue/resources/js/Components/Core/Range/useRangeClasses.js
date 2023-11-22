@@ -1,24 +1,19 @@
-import { twMerge } from 'tailwind-merge'
-import { computed } from 'vue'
-import type { Ref } from 'vue'
-import type { InputSize } from '@/Components/Core/Form/types'
+import { twMerge } from "tailwind-merge"
+import { computed } from "vue"
 
 // Range
-const rangeDefaultClasses = 'w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700'
-const rangeLabelClasses = 'block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+const rangeDefaultClasses =
+    "w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+const rangeLabelClasses =
+    "block mb-2 text-sm font-medium text-gray-900 dark:text-white"
 
-const rangeSizeClasses: Record<InputSize, string> = {
-  lg: 'h-3 range-lg',
-  md: 'h-2 range-md',
-  sm: 'h-1 range-sm',
+const rangeSizeClasses = {
+  lg: "h-3 range-lg",
+  md: "h-2 range-md",
+  sm: "h-1 range-sm"
 }
 
-export type UseRangeClassesProps = {
-  size: Ref<InputSize>
-  disabled: Ref<boolean>
-}
-
-export function useRangeClasses(props: UseRangeClassesProps) {
+export function useRangeClasses(props) {
   const rangeClasses = computed(() => {
     return twMerge(rangeDefaultClasses, rangeSizeClasses[props.size.value])
   })
@@ -29,6 +24,6 @@ export function useRangeClasses(props: UseRangeClassesProps) {
 
   return {
     rangeClasses,
-    labelClasses,
+    labelClasses
   }
 }
