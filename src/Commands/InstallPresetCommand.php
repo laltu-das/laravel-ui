@@ -18,7 +18,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = 'laravel-maker-preset:install {stack : The development stack that should be installed (react,vue)}
+    protected $signature = 'laravel-ui:preset-install {stack : The development stack that should be installed (react,vue)}
                             {--typescript : Indicates if TypeScript is preferred for the Inertia stack (Experimental)}';
 
     /**
