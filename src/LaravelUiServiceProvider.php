@@ -3,7 +3,7 @@
 namespace Laltu\LaravelUi;
 
 use Illuminate\Support\ServiceProvider;
-use Laltu\LaravelMaker\Commands\InstallPresetCommand;
+use Laltu\LaravelUi\Commands\InstallPresetCommand;
 
 class LaravelUiServiceProvider extends ServiceProvider
 {
