@@ -1,10 +1,3 @@
-<template>
-  <div>
-    <ol :class="timelineClasses" v-bind="$attrs">
-      <slot></slot>
-    </ol>
-  </div>
-</template>
 <script setup>
 import classNames from 'classnames'
 import { computed, provide } from 'vue'
@@ -24,3 +17,10 @@ const horizontalClasses = 'flex'
 
 const timelineClasses = computed(() => classNames(defaultClasses, props.horizontal ? horizontalClasses : verticalClasses))
 </script>
+<template>
+    <div>
+        <ol :class="timelineClasses" v-bind="$attrs">
+            <slot></slot>
+        </ol>
+    </div>
+</template>

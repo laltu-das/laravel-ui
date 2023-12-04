@@ -1,14 +1,3 @@
-<template>
-  <div :class="wrapperClasses">
-    <div
-        :class="pointClasses"
-    >
-      <slot />
-    </div>
-    <div :class="borderClasses"></div>
-  </div>
-</template>
-
 <script setup>
 import { computed, inject, useSlots } from 'vue'
 import classNames from 'classnames'
@@ -53,3 +42,13 @@ const pointClasses = computed(() => {
   )
 })
 </script>
+<template>
+    <div :class="wrapperClasses">
+        <div
+            :class="pointClasses"
+        >
+            <slot />
+        </div>
+        <div :class="borderClasses"></div>
+    </div>
+</template>

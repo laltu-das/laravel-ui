@@ -1,10 +1,3 @@
-<template>
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-      <slot></slot>
-    </table>
-  </div>
-</template>
 <script setup>
 import { provide } from 'vue'
 
@@ -27,3 +20,10 @@ provide('striped', props.striped)
 provide('hoverable', props.hoverable)
 provide('stripedColumns', props.stripedColumns)
 </script>
+<template>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <slot></slot>
+        </table>
+    </div>
+</template>

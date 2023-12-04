@@ -1,11 +1,3 @@
-<template>
-  <label class="flex gap-3 items-center justify-start">
-    <input v-model="model" type="checkbox" :disabled="disabled" :class="checkboxClasses" />
-    <span v-if="label" :class="labelClasses">{{ label }}</span>
-    <slot />
-  </label>
-</template>
-
 <script setup>
 import { computed } from 'vue'
 import { useCheckboxClasses } from './useCheckboxClasses'
@@ -28,3 +20,10 @@ const model = computed({
 
 const { checkboxClasses, labelClasses } = useCheckboxClasses()
 </script>
+<template>
+    <label class="flex gap-3 items-center justify-start">
+        <input v-model="model" type="checkbox" :disabled="disabled" :class="checkboxClasses" />
+        <span v-if="label" :class="labelClasses">{{ label }}</span>
+        <slot />
+    </label>
+</template>

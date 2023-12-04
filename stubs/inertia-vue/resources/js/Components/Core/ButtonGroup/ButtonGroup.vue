@@ -3,7 +3,7 @@
    <slot />
   </div>
 </template>
-<!-- TODO: maybe use provide/inject to control styles -->
+
 <style scoped>
 .btn-group > button {
   @apply rounded-none;

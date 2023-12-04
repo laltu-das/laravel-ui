@@ -1,9 +1,3 @@
-<template>
-  <li :class="timelineItemClasses">
-    <slot></slot>
-  </li>
-</template>
-
 <script setup>
 import { computed, inject } from 'vue'
 import classNames from 'classnames'
@@ -17,3 +11,8 @@ const timelineItemClasses = computed(() => {
   return classNames(defaultClasses, isHorizontal ? horizontalClasses : verticalClasses)
 })
 </script>
+<template>
+    <li :class="timelineItemClasses">
+        <slot></slot>
+    </li>
+</template>

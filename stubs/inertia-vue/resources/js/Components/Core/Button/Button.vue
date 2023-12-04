@@ -1,34 +1,3 @@
-<template>
-  <component :is="buttonComponent" :disabled="buttonComponent === 'button' && disabled" :class="wrapperClasses" :[linkAttr]="href">
-    <div v-if="!isOutlineGradient && ($slots.prefix || loadingPrefix)" class="mr-2">
-      <!--automatically add mr class if slot provided or loading -->
-      <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingPrefix" />
-      <slot name="prefix" v-else />
-    </div>
-
-    <span :class="spanClasses">
-      <span v-if="isOutlineGradient && ($slots.prefix || loadingPrefix)" class="mr-2">
-        <!--if outline gradient - need to place slots inside span -->
-        <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingPrefix" />
-        <slot name="prefix" v-else />
-      </span>
-
-      <slot />
-
-      <span v-if="isOutlineGradient && ($slots.suffix || loadingSuffix)" class="ml-2">
-        <!--if outline gradient - need to place slots inside span -->
-        <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingSuffix" />
-        <slot name="suffix" v-else />
-      </span>
-    </span>
-
-    <div v-if="!isOutlineGradient && ($slots.suffix || loadingSuffix)" class="ml-2">
-      <!--automatically add ml class if slot provided or loading -->
-      <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingSuffix" />
-      <slot name="suffix" v-else />
-    </div>
-  </component>
-</template>
 <script setup>
 import { computed, resolveComponent, toRefs } from 'vue'
 import Spinner from '../Spinner/Spinner.vue'
@@ -62,3 +31,34 @@ const linkComponent = props.tag !== 'a' ? resolveComponent(props.tag) : 'a'
 const buttonComponent = props.href ? linkComponent : 'button'
 const linkAttr = props.tag === 'router-link' || props.tag === 'nuxt-link' ? 'to' : 'href'
 </script>
+<template>
+    <component :is="buttonComponent" :disabled="buttonComponent === 'button' && disabled" :class="wrapperClasses" :[linkAttr]="href">
+        <div v-if="!isOutlineGradient && ($slots.prefix || loadingPrefix)" class="mr-2">
+            <!--automatically add mr class if slot provided or loading -->
+            <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingPrefix" />
+            <slot name="prefix" v-else />
+        </div>
+
+        <span :class="spanClasses">
+      <span v-if="isOutlineGradient && ($slots.prefix || loadingPrefix)" class="mr-2">
+        <!--if outline gradient - need to place slots inside span -->
+        <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingPrefix" />
+        <slot name="prefix" v-else />
+      </span>
+
+      <slot />
+
+      <span v-if="isOutlineGradient && ($slots.suffix || loadingSuffix)" class="ml-2">
+        <!--if outline gradient - need to place slots inside span -->
+        <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingSuffix" />
+        <slot name="suffix" v-else />
+      </span>
+    </span>
+
+        <div v-if="!isOutlineGradient && ($slots.suffix || loadingSuffix)" class="ml-2">
+            <!--automatically add ml class if slot provided or loading -->
+            <spinner :color="spinnerColor" :size="spinnerSize" v-if="loadingSuffix" />
+            <slot name="suffix" v-else />
+        </div>
+    </component>
+</template>

@@ -1,28 +1,3 @@
-<template>
-  <div class="inline-flex relative" ref="wrapper">
-    <div class="inline-flex items-center">
-      <slot-listener @click="onToggle">
-        <slot name="trigger">
-          <Button>
-            {{ text }}
-            <template #suffix>
-              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </template>
-          </Button>
-        </slot>
-      </slot-listener>
-    </div>
-    <transition :name="transitionName">
-      <div ref="content" v-if="visible" :style="contentStyles" :class="[contentClasses]">
-        <slot-listener @click="onHide">
-          <slot />
-        </slot-listener>
-      </div>
-    </transition>
-  </div>
-</template>
 <script setup>
 import { computed, ref, toRef } from 'vue'
 import { useDropdownClasses } from './useDropdownClasses'
@@ -68,3 +43,28 @@ onClickOutside(wrapper, () => {
   visible.value = false
 })
 </script>
+<template>
+    <div class="inline-flex relative" ref="wrapper">
+        <div class="inline-flex items-center">
+            <slot-listener @click="onToggle">
+                <slot name="trigger">
+                    <Button>
+                        {{ text }}
+                        <template #suffix>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </template>
+                    </Button>
+                </slot>
+            </slot-listener>
+        </div>
+        <transition :name="transitionName">
+            <div ref="content" v-if="visible" :style="contentStyles" :class="[contentClasses]">
+                <slot-listener @click="onHide">
+                    <slot />
+                </slot-listener>
+            </div>
+        </transition>
+    </div>
+</template>

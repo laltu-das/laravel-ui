@@ -1,16 +1,5 @@
-<template>
-  <label>
-    <div :class="labelClasses">{{ label }}</div>
-    <div :class="wrapperClasses">
-      <textarea v-model="model" :rows="rows" :class="textareaClasses" :placeholder="placeholder"></textarea>
-      <div v-if="$slots.footer" :class="footerClasses">
-        <slot name="footer"></slot>
-      </div>
-    </div>
-  </label>
-</template>
-
-<script setup>import { computed } from "vue"
+<script setup>
+import { computed } from "vue"
 import { useTextareaClasses } from "./useTextareaClasses"
 
 const props = withDefaults(defineProps(), {
@@ -39,3 +28,14 @@ const {
 } = useTextareaClasses(props.custom)
 
 </script>
+<template>
+    <label>
+        <div :class="labelClasses">{{ label }}</div>
+        <div :class="wrapperClasses">
+            <textarea v-model="model" :rows="rows" :class="textareaClasses" :placeholder="placeholder"></textarea>
+            <div v-if="$slots.footer" :class="footerClasses">
+                <slot name="footer"></slot>
+            </div>
+        </div>
+    </label>
+</template>
