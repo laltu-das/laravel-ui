@@ -15,8 +15,6 @@
 </template>
 <script setup>
 import { computed, ref, toRefs, useSlots } from 'vue'
-import type { PropType } from 'vue'
-import type { AvatarSize, AvatarStatus, AvatarStatusPosition } from './types'
 import { useAvatarClasses } from '@/Components/Core/Avatar/useAvatarClasses'
 
 const imageError = ref(false)
@@ -45,7 +43,7 @@ const props = defineProps({
     default: false,
   },
   size: {
-    type: String as PropType<AvatarSize>,
+    type: String,
     default: 'md',
   },
   stacked: {
@@ -53,11 +51,11 @@ const props = defineProps({
     default: false,
   },
   status: {
-    type: String as PropType<AvatarStatus>,
+    type: String,
     default: null,
   },
   statusPosition: {
-    type: String as PropType<AvatarStatusPosition>,
+    type: String,
     default: 'top-right',
   },
   initials: {

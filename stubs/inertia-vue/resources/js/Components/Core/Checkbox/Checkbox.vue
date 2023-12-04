@@ -10,12 +10,7 @@
 import { computed } from 'vue'
 import { useCheckboxClasses } from './useCheckboxClasses'
 
-interface CheckboxProps {
-  modelValue?: boolean,
-  label?: string,
-  disabled?: boolean,
-}
-const props = withDefaults(defineProps<CheckboxProps>(), {
+const props = withDefaults(defineProps(), {
   modelValue: false,
   label: '',
   disabled: false,

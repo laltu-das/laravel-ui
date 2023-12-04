@@ -25,7 +25,6 @@
 </template>
 <script setup>
 import { computed, ref, toRef } from 'vue'
-import type { DropdownPlacement } from './types'
 import { useDropdownClasses } from './useDropdownClasses'
 import Button from '../Button/Button.vue'
 import { onClickOutside } from '@vueuse/core'
@@ -35,11 +34,7 @@ const onHide = () => (visible.value = false)
 const onToggle = () => (visible.value = !visible.value)
 
 const props = withDefaults(
-  defineProps<{
-    placement: DropdownPlacement
-    text: string
-    transition: string
-  }>(),
+  defineProps(),
   {
     placement: 'bottom',
     text: '',
@@ -47,7 +42,7 @@ const props = withDefaults(
   },
 )
 
-const placementTransitionMap: Record<DropdownPlacement, string> = {
+const placementTransitionMap = {
   bottom: 'to-bottom',
   left: 'to-left',
   right: 'to-right',
@@ -59,8 +54,8 @@ const transitionName = computed(() => {
   return props.transition
 })
 
-const content = ref<HTMLDivElement>()
-const wrapper = ref<HTMLDivElement>()
+const content = ref()
+const wrapper = ref()
 
 const { contentClasses, contentStyles } = useDropdownClasses({
   placement: toRef(props, 'placement'),

@@ -10,40 +10,32 @@
   </label>
 </template>
 
-<script setup>
-import { computed } from 'vue'
-import { useTextareaClasses } from './useTextareaClasses'
+<script setup>import { computed } from "vue"
+import { useTextareaClasses } from "./useTextareaClasses"
 
-interface TextareaProps {
-  modelValue?: string;
-  label?: string;
-  rows?: number;
-  custom?: boolean;
-  placeholder?: string;
-}
-
-const props = withDefaults(defineProps<TextareaProps>(), {
-  value: '',
-  label: 'Your message',
-  rows: 4,
-  custom: false,
-  placeholder: 'Write your message here...',
+const props = withDefaults(defineProps(), {
+    value: "",
+    label: "Your message",
+    rows: 4,
+    custom: false,
+    placeholder: "Write your message here..."
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"])
 const model = computed({
-  get() {
-    return props.modelValue
-  },
-  set(val) {
-    emit('update:modelValue', val)
-  },
+    get() {
+        return props.modelValue
+    },
+    set(val) {
+        emit("update:modelValue", val)
+    }
 })
 
 const {
-  textareaClasses,
-  labelClasses,
-  wrapperClasses,
-  footerClasses,
+    textareaClasses,
+    labelClasses,
+    wrapperClasses,
+    footerClasses
 } = useTextareaClasses(props.custom)
+
 </script>

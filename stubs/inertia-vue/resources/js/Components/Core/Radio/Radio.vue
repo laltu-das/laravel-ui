@@ -1,3 +1,27 @@
+<script setup>
+import { computed } from "vue"
+import { useRadioClasses } from "./useRadioClasses"
+
+const props = withDefaults(defineProps(), {
+    value: "",
+    name: "",
+    label: "",
+    disabled: false
+})
+
+const emit = defineEmits(["update:modelValue"])
+const model = computed({
+    get() {
+        return props.modelValue
+    },
+    set(val) {
+        emit("update:modelValue", val)
+    }
+})
+
+const { radioClasses, labelClasses } = useRadioClasses()
+
+</script>
 <template>
   <label class="flex w-[100%] items-center">
     <input type="radio" v-model="model" :disabled="disabled" :name="name" :value="value"
@@ -7,34 +31,4 @@
   </label>
 </template>
 
-<script setup>
-import { computed } from 'vue'
-import { useRadioClasses } from './useRadioClasses'
 
-interface RadioProps {
-  modelValue?: string;
-  name?: string;
-  value?: string;
-  label?: string;
-  disabled?: boolean;
-}
-
-const props = withDefaults(defineProps<RadioProps>(), {
-  value: '',
-  name: '',
-  label: '',
-  disabled: false,
-})
-
-const emit = defineEmits(['update:modelValue'])
-const model = computed({
-  get() {
-    return props.modelValue
-  },
-  set(val) {
-    emit('update:modelValue', val)
-  },
-})
-
-const { radioClasses, labelClasses } = useRadioClasses()
-</script>

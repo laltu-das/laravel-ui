@@ -24,87 +24,81 @@
   </div>
 </template>
 <script setup>
-import { ref, useAttrs } from 'vue'
-import type { AlertType } from './types'
-import { twMerge } from 'tailwind-merge'
+import { ref, useAttrs } from "vue"
+import { twMerge } from "tailwind-merge"
 
-interface IAlertProps {
-  type?: AlertType
-  closable?: boolean
-  icon?: boolean
-  border?: boolean
-}
 defineOptions({
-  inheritAttrs: false,
+    inheritAttrs: false
 })
-const props = withDefaults(defineProps<IAlertProps>(), {
-  type: 'info',
-  closable: false,
-  icon: false,
-  border: false,
+const props = withDefaults(defineProps(), {
+    type: "info",
+    closable: false,
+    icon: false,
+    border: false
 })
-defineSlots<{
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  default: any
-  'close-icon': any
-  icon: any
-  title: any
-  /* eslint-enable @typescript-eslint/no-explicit-any */
-}>()
-const emits = defineEmits<{
-  (e: 'close'): void
-}>()
+defineSlots()
+
+const emits = defineEmits()
 
 const attrs = useAttrs()
-const alertTextClasses: Record<AlertType, string> = {
-  danger: 'text-red-800 dark:text-red-400',
-  dark: 'text-gray-800 dark:text-gray-300',
-  info: 'text-blue-800 dark:text-blue-400',
-  success: 'text-green-800 dark:text-green-400',
-  warning: 'text-yellow-800 dark:text-yellow-300',
+const alertTextClasses = {
+    danger: "text-red-800 dark:text-red-400",
+    dark: "text-gray-800 dark:text-gray-300",
+    info: "text-blue-800 dark:text-blue-400",
+    success: "text-green-800 dark:text-green-400",
+    warning: "text-yellow-800 dark:text-yellow-300"
 }
-const alertTypeClasses: Record<AlertType, string> = {
-  danger: 'bg-red-50',
-  dark: 'bg-gray-50',
-  info: 'bg-blue-50',
-  success: 'bg-green-50',
-  warning: 'bg-yellow-50',
+const alertTypeClasses = {
+    danger: "bg-red-50",
+    dark: "bg-gray-50",
+    info: "bg-blue-50",
+    success: "bg-green-50",
+    warning: "bg-yellow-50"
 }
-const defaultCloseButtonClasses = 'ml-auto -mr-1.5 -my-1.5 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8 dark:bg-gray-800 dark:hover:bg-gray-700'
-const closeButtonClasses: Record<AlertType, string> = {
-  danger: 'text-red-500 dark:text-red-400 bg-red-50 hover:bg-red-200 focus:ring-red-400',
-  dark: 'text-gray-500 dark:text-gray-300 bg-gray-50 hover:bg-gray-200 focus:ring-gray-400 dark:hover:text-white',
-  info: 'text-blue-500 dark:text-blue-400 bg-blue-50 hover:bg-blue-200 focus:ring-blue-400',
-  success: 'text-green-500 dark:text-green-400 bg-green-50 hover:bg-green-200 focus:ring-green-400',
-  warning: 'text-yellow-500 dark:text-yellow-300 bg-yellow-50 hover:bg-yellow-200 focus:ring-yellow-400',
+const defaultCloseButtonClasses =
+    "ml-auto -mr-1.5 -my-1.5 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8 dark:bg-gray-800 dark:hover:bg-gray-700"
+const closeButtonClasses = {
+    danger:
+        "text-red-500 dark:text-red-400 bg-red-50 hover:bg-red-200 focus:ring-red-400",
+    dark:
+        "text-gray-500 dark:text-gray-300 bg-gray-50 hover:bg-gray-200 focus:ring-gray-400 dark:hover:text-white",
+    info:
+        "text-blue-500 dark:text-blue-400 bg-blue-50 hover:bg-blue-200 focus:ring-blue-400",
+    success:
+        "text-green-500 dark:text-green-400 bg-green-50 hover:bg-green-200 focus:ring-green-400",
+    warning:
+        "text-yellow-500 dark:text-yellow-300 bg-yellow-50 hover:bg-yellow-200 focus:ring-yellow-400"
 }
-const closeBtnClasses = twMerge(defaultCloseButtonClasses, closeButtonClasses[props.type])
-const borderColor: Record<AlertType, string> = {
-  danger: 'border-red-500 dark:text-red-400',
-  dark: 'border-gray-500 dark:text-gray-400',
-  info: 'border-blue-500 dark:text-blue-400',
-  success: 'border-green-500 dark:text-green-400',
-  warning: 'border-yellow-500 dark:text-yellow-400',
+const closeBtnClasses = twMerge(
+    defaultCloseButtonClasses,
+    closeButtonClasses[props.type]
+)
+const borderColor = {
+    danger: "border-red-500 dark:text-red-400",
+    dark: "border-gray-500 dark:text-gray-400",
+    info: "border-blue-500 dark:text-blue-400",
+    success: "border-green-500 dark:text-green-400",
+    warning: "border-yellow-500 dark:text-yellow-400"
 }
 const colors = {
-  danger: [alertTextClasses.danger, alertTypeClasses.danger].join(' '),
-  dark: [alertTextClasses.dark, alertTypeClasses.dark].join(' '),
-  info: [alertTextClasses.info, alertTypeClasses.info].join(' '),
-  success: [alertTextClasses.success, alertTypeClasses.success].join(' '),
-  warning: [alertTextClasses.warning, alertTypeClasses.warning].join(' '),
+    danger: [alertTextClasses.danger, alertTypeClasses.danger].join(" "),
+    dark: [alertTextClasses.dark, alertTypeClasses.dark].join(" "),
+    info: [alertTextClasses.info, alertTypeClasses.info].join(" "),
+    success: [alertTextClasses.success, alertTypeClasses.success].join(" "),
+    warning: [alertTextClasses.warning, alertTypeClasses.warning].join(" ")
 }
 const wrapperClasses = twMerge(
-  'p-4 gap-3 text-sm dark:bg-gray-800 rounded-lg',
-  colors[props.type],
-  (props.icon || props.closable) && 'flex items-center',
-  borderColor[props.type],
-  props.border && 'border',
-  attrs.class as string,
+    "p-4 gap-3 text-sm dark:bg-gray-800 rounded-lg",
+    colors[props.type],
+    (props.icon || props.closable) && "flex items-center",
+    borderColor[props.type],
+    props.border && "border",
+    attrs.class
 )
 const visible = ref(true)
 
 function onCloseClick() {
-  emits('close')
-  visible.value = false
+    emits("close")
+    visible.value = false
 }
 </script>

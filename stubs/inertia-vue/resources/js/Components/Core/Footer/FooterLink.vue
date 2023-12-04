@@ -1,24 +1,21 @@
 <script setup>
-import { resolveComponent, useAttrs } from 'vue'
-import { twMerge } from 'tailwind-merge'
+import { resolveComponent, useAttrs } from "vue"
+import { twMerge } from "tailwind-merge"
 defineOptions({
-  inheritAttrs: false,
+    inheritAttrs: false
 })
 const attrs = useAttrs()
-interface IFooterLinkProps {
-  href: string
-  aClass?: string
-  component?: string
-}
-const props = withDefaults(defineProps<IFooterLinkProps>(), {
-  href: '',
-  aClass: '',
-  component: 'a',
+const props = withDefaults(defineProps(), {
+    href: "",
+    aClass: "",
+    component: "a"
 })
-const linkComponent = props.component === 'a' ? 'a' : resolveComponent(props.component)
-const linkAttr = props.component === 'router-link' ? 'to' : 'href'
-const aClasses = twMerge('hover:underline', props.aClass)
-const liClasses = twMerge('mr-4 md:mr-6 last:mr-0', attrs.class as string)
+const linkComponent =
+    props.component === "a" ? "a" : resolveComponent(props.component)
+const linkAttr = props.component === "router-link" ? "to" : "href"
+const aClasses = twMerge("hover:underline", props.aClass)
+const liClasses = twMerge("mr-4 md:mr-6 last:mr-0", attrs.class)
+
 </script>
 
 <template>

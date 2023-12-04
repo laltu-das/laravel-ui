@@ -1,11 +1,3 @@
-<template>
-  <div :class="menuClasses">
-    <ul :class="listClasses">
-      <slot name="default" />
-    </ul>
-  </div>
-</template>
-
 <script setup>
 import classNames from 'classnames'
 import { computed } from 'vue'
@@ -29,3 +21,10 @@ const listClasses = computed(() => {
   return classNames(listClassesDefault, isMobile.value ? mobileListClasses : '')
 })
 </script>
+<template>
+    <div :class="menuClasses">
+        <ul :class="listClasses">
+            <slot name="default" />
+        </ul>
+    </div>
+</template>

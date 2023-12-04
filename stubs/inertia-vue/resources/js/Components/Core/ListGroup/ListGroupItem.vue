@@ -1,14 +1,3 @@
-<template>
-  <li :class="itemClasses">
-    <div class="mr-2" v-if="$slots.prefix">
-      <slot name="prefix" />
-    </div>
-    <slot />
-    <div class="ml-2" v-if="$slots.suffix">
-      <slot name="suffix" />
-    </div>
-  </li>
-</template>
 <script setup>
 import {
   useListGroupItemClasses,
@@ -28,3 +17,14 @@ const props = defineProps({
 
 const { itemClasses } = useListGroupItemClasses(toRefs(props))
 </script>
+<template>
+    <li :class="itemClasses">
+        <div class="mr-2" v-if="$slots.prefix">
+            <slot name="prefix" />
+        </div>
+        <slot />
+        <div class="ml-2" v-if="$slots.suffix">
+            <slot name="suffix" />
+        </div>
+    </li>
+</template>

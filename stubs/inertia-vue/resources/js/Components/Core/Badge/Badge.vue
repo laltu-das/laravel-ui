@@ -6,15 +6,9 @@
 </template>
 <script setup>
 import { computed, useSlots } from 'vue'
-import type { BadgeType, BadgeSize } from './types'
 import { useBadgeClasses } from '@/Components/Core/Badge/useBadgeClasses'
 
-interface IBadgeProps {
-  type?: BadgeType
-  size?: BadgeSize
-  href?: string | null
-}
-const props = withDefaults(defineProps<IBadgeProps>(), {
+const props = withDefaults(defineProps(), {
   type: 'default',
   size: 'xs',
   href: null,

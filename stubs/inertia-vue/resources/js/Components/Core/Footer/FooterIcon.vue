@@ -1,23 +1,22 @@
 <script setup>
-import { twMerge } from 'tailwind-merge'
-import { useAttrs } from 'vue'
+import { twMerge } from "tailwind-merge"
+import { useAttrs } from "vue"
 defineOptions({
-  inheritAttrs: false,
+    inheritAttrs: false
 })
 const attrs = useAttrs()
-interface IFooterIconProps {
-  href?: string
-  ariaLabel?: string
-  srText?: string
-}
-const props = withDefaults(defineProps<IFooterIconProps>(), {
-  href: '',
-  ariaLabel: '',
-  srText: '',
+const props = withDefaults(defineProps(), {
+    href: "",
+    ariaLabel: "",
+    srText: ""
 })
-const iconComponent = props.href ? 'a' : 'span'
+const iconComponent = props.href ? "a" : "span"
 
-const aClasses = twMerge('text-gray-500 hover:text-gray-900 dark:hover:text-white', attrs.class as string)
+const aClasses = twMerge(
+    "text-gray-500 hover:text-gray-900 dark:hover:text-white",
+    attrs.class
+)
+
 </script>
 
 <template>

@@ -8,9 +8,7 @@
 </template>
 <script setup>
 import { computed, toRefs } from 'vue'
-import type { PropType } from 'vue'
 import { useCardsClasses } from './useCardClasses'
-import type { CardsVariant } from './types'
 
 const props = defineProps({
   href: {
@@ -26,7 +24,7 @@ const props = defineProps({
     default: '',
   },
   variant: {
-    type: String as PropType<CardsVariant>,
+    type: String,
     default: 'default',
   },
 })

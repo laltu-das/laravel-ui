@@ -1,24 +1,16 @@
 <script setup>
-import { resolveComponent } from 'vue'
+import { resolveComponent } from "vue"
 
-const props = withDefaults(
-  defineProps<{
-    name?: string
-    link?: string
-    logo?: string
-    alt?: string
-    tag?: string
-  }>(),
-  {
-    name: '',
-    link: '/',
-    logo: '',
-    tag: 'router-link',
-  },
-)
+const props = withDefaults(defineProps(), {
+    name: "",
+    link: "/",
+    logo: "",
+    tag: "router-link"
+})
 
-const component = props.tag === 'a' ? 'a' : resolveComponent(props.tag)
-const linkAttr = props.tag === 'a' ? 'href' : 'to'
+const component = props.tag === "a" ? "a" : resolveComponent(props.tag)
+const linkAttr = props.tag === "a" ? "href" : "to"
+
 </script>
 
 <template>

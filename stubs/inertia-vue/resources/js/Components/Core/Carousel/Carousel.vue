@@ -30,12 +30,10 @@
 </template>
 <script setup>
 import { onMounted, ref } from 'vue'
-import type { PropType } from 'vue'
-import type { PictureItem } from '@/Components/Core/Carousel/types'
 
 const props = defineProps({
   pictures: {
-    type: Array as PropType<PictureItem[]>,
+    type: Array,
     default() {
       return [
         {
@@ -90,7 +88,7 @@ const resetInterval = () => {
   automaticSlide()
 }
 
-const slideTo = (index: number) => {
+const slideTo = (index) => {
   currentPicture.value = index
   resetInterval()
 }

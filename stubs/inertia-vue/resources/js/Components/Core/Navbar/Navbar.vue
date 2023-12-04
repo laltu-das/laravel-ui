@@ -1,20 +1,3 @@
-<template>
-  <nav :class="navbarClasses">
-    <div class="container flex flex-wrap justify-between items-center mx-auto">
-      <slot name="logo"/>
-      <button @click="toggleMobileMenu()" type="button" class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
-        <span class="sr-only">Open main menu</span>
-        <slot name="menu-icon">
-          <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-        </slot>
-      </button>
-      <slot name="default" :isShowMenu="isShowMenu" />
-      <div v-if="slots['right-side']" class="flex md:order-2 hidden md:flex">
-        <slot name="right-side" />
-      </div>
-    </div>
-  </nav>
-</template>
 <script setup>
 import { useSlots, ref, computed } from 'vue'
 import { breakpointsTailwind, useBreakpoints, useToggle } from '@vueuse/core'
@@ -62,3 +45,20 @@ const isShowMenu = computed(() => {
   }
 })
 </script>
+<template>
+    <nav :class="navbarClasses">
+        <div class="container flex flex-wrap justify-between items-center mx-auto">
+            <slot name="logo"/>
+            <button @click="toggleMobileMenu()" type="button" class="inline-flex items-center p-2 ml-3 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-default" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <slot name="menu-icon">
+                    <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+                </slot>
+            </button>
+            <slot name="default" :isShowMenu="isShowMenu" />
+            <div v-if="slots['right-side']" class="flex md:order-2 hidden md:flex">
+                <slot name="right-side" />
+            </div>
+        </div>
+    </nav>
+</template>

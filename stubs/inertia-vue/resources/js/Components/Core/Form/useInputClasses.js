@@ -25,7 +25,7 @@ export function useInputClasses(props) {
     const classByStatus =
         vs === ValidationStatus.Success
             ? successInputClasses
-            : vs == ValidationStatus.Error
+            : vs === ValidationStatus.Error
                 ? errorInputClasses
                 : ""
     return twMerge(
@@ -41,7 +41,7 @@ export function useInputClasses(props) {
     const classByStatus =
         vs === ValidationStatus.Success
             ? "text-green-700 dark:text-green-500"
-            : vs == ValidationStatus.Error
+            : vs === ValidationStatus.Error
                 ? "text-red-700 dark:text-red-500"
                 : "text-gray-900 dark:text-gray-300"
     return twMerge(baseLabelClasses, classByStatus)

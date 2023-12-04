@@ -1,3 +1,42 @@
+<script setup>
+import { useToastClasses } from "./useToastClasses"
+import { ref, toRefs } from "vue"
+
+const props = defineProps({
+    type: {
+        type: String,
+        default: "empty"
+    },
+    alignment: {
+        type: String,
+        default: "center"
+    },
+    closable: {
+        type: Boolean,
+        default: false
+    },
+    divide: {
+        type: Boolean,
+        default: false
+    }
+})
+
+const visible = ref(true)
+
+const emit = defineEmits(["close"])
+
+const { typeClasses, wrapperClasses, contentClasses } = useToastClasses(
+    toRefs(props)
+)
+
+const onClose = () => {
+    emit("close")
+    visible.value = false
+}
+
+</script>
+
+
 <template>
   <div v-if="visible" id="toast-default" :class="wrapperClasses" role="alert" >
     <div
@@ -22,39 +61,3 @@
     </button>
   </div>
 </template>
-<script setup>
-import type { ToastAlign, ToastType } from '@/Components/Core/Toast/types'
-import type { PropType } from 'vue'
-import { useToastClasses } from './useToastClasses'
-import { ref, toRefs } from 'vue'
-
-const props = defineProps({
-  type: {
-    type: String as PropType<ToastType>,
-    default: 'empty',
-  },
-  alignment: {
-    type: String as PropType<ToastAlign>,
-    default: 'center',
-  },
-  closable: {
-    type: Boolean,
-    default: false,
-  },
-  divide: {
-    type: Boolean,
-    default: false,
-  },
-})
-
-const visible = ref(true)
-
-const emit = defineEmits(['close'])
-
-const { typeClasses, wrapperClasses, contentClasses } = useToastClasses(toRefs(props))
-
-const onClose = () => {
-  emit('close')
-  visible.value = false
-}
-</script>

@@ -1,20 +1,14 @@
 <script setup>
-withDefaults(
-  defineProps<{
-    label?: string
-  }>(),
-  {
-    label: undefined,
-  },
-)
+withDefaults(defineProps(), {
+    label: undefined
+})
 
-const emit = defineEmits<{
-  (e: 'close'): void
-}>()
+const emit = defineEmits()
 
 function close() {
-  emit('close')
+    emit("close")
 }
+
 </script>
 
 <template>

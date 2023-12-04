@@ -34,23 +34,8 @@ import { computed, resolveComponent, toRefs } from 'vue'
 import Spinner from '../Spinner/Spinner.vue'
 import { useButtonClasses } from './useButtonClasses'
 import { useButtonSpinner } from './useButtonSpinner'
-import type { ButtonGradient, ButtonMonochromeGradient, ButtonSize, ButtonVariant } from './types'
 
-interface IButtonProps {
-  color?: ButtonVariant
-  gradient?: ButtonGradient | null
-  size?: ButtonSize
-  shadow?: ButtonMonochromeGradient | null
-  pill?: boolean
-  square?: boolean
-  outline?: boolean
-  loading?: boolean
-  loadingPosition?: 'suffix' | 'prefix'
-  disabled?: boolean
-  href?: string
-  tag?: string
-}
-const props = withDefaults(defineProps<IButtonProps>(), {
+const props = withDefaults(defineProps(), {
   color: 'default',
   gradient: null,
   size: 'md',

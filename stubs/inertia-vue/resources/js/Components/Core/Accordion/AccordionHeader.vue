@@ -1,6 +1,6 @@
 <script setup>
 import { useAccordionState } from '@/Components/Core/Accordion/useAccordionState'
-import { computed, onMounted, ref, type ComputedRef } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useAccordionHeaderClasses } from '@/Components/Core/Accordion/useAccordionHeaderClasses'
 
 const isLoaded = ref(false)
