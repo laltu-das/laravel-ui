@@ -5,7 +5,6 @@ namespace Laltu\LaravelUi\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
@@ -18,8 +17,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = 'laravel-ui:preset {stack : The development stack that should be installed (react,vue)}
-                            {--typescript : Indicates if TypeScript is preferred for the Inertia stack (Experimental)}';
+    protected $signature = 'laravel-ui:preset {stack : The development stack that should be installed (react,vue)} {--typescript : Indicates if TypeScript is preferred for the Inertia stack (Experimental)}';
 
     /**
      * The console command description.
@@ -35,83 +33,72 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      */
     protected static function flushNodeModules(): void
     {
-        tap(new Filesystem, function ($files) {
-            $files->deleteDirectory(base_path('node_modules'));
-
-            $files->delete(base_path('yarn.lock'));
-            $files->delete(base_path('package-lock.json'));
-        });
+        // Remove node_modules directory and lock files
+        (new Filesystem)->deleteDirectory(base_path('node_modules'));
+        collect(['yarn.lock', 'package-lock.json'])->each(fn ($file) => (new Filesystem)->delete(base_path($file)));
     }
 
     /**
-     * Execute the console command.
+     * Handle the console command.
      *
      * @return int|null
      */
     public function handle(): ?int
     {
-        if ($this->argument('stack') === 'vue') {
-            return $this->installInertiaVueStack();
-        } elseif ($this->argument('stack') === 'react') {
-            return $this->installInertiaReactStack();
+        // Get the specified stack (react, vue) from command argument
+        $stack = $this->argument('stack');
+
+        // Validate stack argument
+        if (!in_array($stack, ['vue', 'react'])) {
+            $this->error('Invalid stack. Supported stacks are [vue] and [react].');
+            return 1;
         }
 
-        $this->components->error('Invalid stack. Supported stacks are [blade], [livewire], [livewire-functional], [react], [vue], and [api].');
-
-        return 1;
+        // Call appropriate installation method based on the specified stack
+        return $stack === 'vue' ? $this->installInertiaVueStack() : $this->installInertiaReactStack();
     }
 
     /**
      * Install the Inertia Vue Breeze stack.
      *
-     * @return int|null
+     * @return int
      */
-    protected function installInertiaVueStack()
+    protected function installInertiaVueStack(): int
     {
-        // NPM Packages...
-        $this->updateNodePackages(function ($packages) {
-            return [
-                    "@vueuse/core" => "^10.6.1",
-                    "classnames" => "^2.3.2",
-                    "floating-vue" => "^2.0.0-beta.24",
-                    "lodash-es" => "^4.17.21",
-                    "tailwind-merge" => "^2.0.0",
-                ] + $packages;
-        });
+        // Update NPM packages for Vue stack
+        $this->updateNodePackages(fn ($packages) => [
+            "@vueuse/core" => "^10.6.1",
+            "classnames" => "^2.3.2",
+            "floating-vue" => "^2.0.0-beta.24",
+            "lodash-es" => "^4.17.21",
+            "tailwind-merge" => "^2.0.0",
+        ]);
 
-        // NPM Packages...
-        $this->updateNodePackages(function ($packages) {
-            return [
-                    "laravel-precognition-vue-inertia" => "^0.5.2"
-                ] + $packages;
-        }, false);
+        // Update additional NPM packages for Vue stack
+        $this->updateNodePackages(fn ($packages) => [
+            "laravel-precognition-vue-inertia" => "^0.5.2"
+        ], false);
 
-        // Components + Pages...
-        (new Filesystem)->ensureDirectoryExists(resource_path('js/Components'));
-        (new Filesystem)->ensureDirectoryExists(resource_path('js/Layouts'));
-        (new Filesystem)->ensureDirectoryExists(resource_path('js/Pages'));
+        // Ensure existence of required directories
+        collect(['Components', 'Layouts', 'Pages'])->each(fn ($directory) =>
+        (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}"))
+        );
 
-        if ($this->option('typescript')) {
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-vue-ts/resources/js/Components', resource_path('js/Components'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-vue-ts/resources/js/Layouts', resource_path('js/Layouts'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-vue-ts/resources/js/Pages', resource_path('js/Pages'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-vue-ts/resources/js/types', resource_path('js/types'));
-        } else {
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-vue/resources/js/Components', resource_path('js/Components'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-vue/resources/js/Layouts', resource_path('js/Layouts'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-vue/resources/js/Pages', resource_path('js/Pages'));
-        }
+        // Copy Vue stub files to the resource directory
+        $this->copyDirectories('inertia-vue' . ($this->option('typescript') ? '-ts' : ''), 'vue');
 
-        $this->components->info('Installing and building Node dependencies.');
+        // Install and build Node dependencies
+        $this->installAndBuildNodeDependencies();
 
-        $this->runCommands(['npm install', 'npm run build']);
-
+        // Display success message
         $this->line('');
-        $this->components->info('Breeze scaffolding installed successfully.');
+        $this->info('Breeze scaffolding installed successfully.');
+
+        return 0;
     }
 
     /**
-     * Update the "package.json" file.
+     * Update the "package.json" file with the provided callback.
      *
      * @param callable $callback
      * @param bool $dev
@@ -119,21 +106,27 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      */
     protected static function updateNodePackages(callable $callback, bool $dev = true): void
     {
+        // Check if "package.json" file exists
         if (!file_exists(base_path('package.json'))) {
             return;
         }
 
+        // Determine whether to update devDependencies or dependencies
         $configurationKey = $dev ? 'devDependencies' : 'dependencies';
 
+        // Read and decode the existing "package.json" file
         $packages = json_decode(file_get_contents(base_path('package.json')), true);
 
+        // Apply the callback to update the specified dependencies
         $packages[$configurationKey] = $callback(
             array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : [],
             $configurationKey
         );
 
+        // Sort dependencies alphabetically
         ksort($packages[$configurationKey]);
 
+        // Write the updated packages back to "package.json" file
         file_put_contents(
             base_path('package.json'),
             json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
@@ -141,79 +134,97 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     }
 
     /**
-     * Run the given commands.
+     * Run the given shell commands.
      *
      * @param array $commands
      * @return void
      */
-    protected function runCommands($commands): void
+    protected function runCommands(array $commands): void
     {
+        // Create a new Process to run the specified shell commands
         $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
 
+        // Enable TTY if applicable
         if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
             try {
                 $process->setTty(true);
-            } catch (RuntimeException $e) {
+            } catch (\RuntimeException $e) {
                 $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
             }
         }
 
-        $process->run(function ($type, $line) {
-            $this->output->write('    ' . $line);
-        });
+        // Run the process and display the output
+        $process->run(fn ($type, $line) => $this->output->write('    ' . $line));
     }
 
     /**
      * Install the Inertia React Breeze stack.
      *
-     * @return int|null
+     * @return int
      */
-    protected function installInertiaReactStack()
+    protected function installInertiaReactStack(): int
     {
-        // NPM Packages...
-        $this->updateNodePackages(function ($packages) {
-            return [
-                    '@headlessui/react' => '^1.4.2',
-                    '@inertiajs/react' => '^1.0.0',
-                    '@tailwindcss/forms' => '^0.5.3',
-                    '@vitejs/plugin-react' => '^4.0.3',
-                    'autoprefixer' => '^10.4.12',
-                    'postcss' => '^8.4.18',
-                    'tailwindcss' => '^3.2.1',
-                    'react' => '^18.2.0',
-                    'react-dom' => '^18.2.0',
-                ] + $packages;
-        });
+        // Update NPM packages for React stack
+        $this->updateNodePackages(fn ($packages) => [
+            '@headlessui/react' => '^1.4.2',
+            '@inertiajs/react' => '^1.0.0',
+            '@tailwindcss/forms' => '^0.5.3',
+            '@vitejs/plugin-react' => '^4.0.3',
+            'autoprefixer' => '^10.4.12',
+            'postcss' => '^8.4.18',
+            'tailwindcss' => '^3.2.1',
+            'react' => '^18.2.0',
+            'react-dom' => '^18.2.0',
+        ]);
 
-        // Components + Pages...
-        (new Filesystem)->ensureDirectoryExists(resource_path('js/Components'));
-        (new Filesystem)->ensureDirectoryExists(resource_path('js/Layouts'));
-        (new Filesystem)->ensureDirectoryExists(resource_path('js/Pages'));
+        // Ensure existence of required directories
+        collect(['Components', 'Layouts', 'Pages'])->each(fn ($directory) =>
+        (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}"))
+        );
 
-        if ($this->option('typescript')) {
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-react-ts/resources/js/Components', resource_path('js/Components'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-react-ts/resources/js/Layouts', resource_path('js/Layouts'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-react-ts/resources/js/Pages', resource_path('js/Pages'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-react-ts/resources/js/types', resource_path('js/types'));
-        } else {
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-react/resources/js/Components', resource_path('js/Components'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-react/resources/js/Layouts', resource_path('js/Layouts'));
-            (new Filesystem)->copyDirectory(__DIR__ . '/../../stubs/inertia-react/resources/js/Pages', resource_path('js/Pages'));
-        }
+        // Copy React stub files to the resource directory
+        $this->copyDirectories('inertia-react' . ($this->option('typescript') ? '-ts' : ''), 'react');
 
+        // Install and build Node dependencies
+        $this->installAndBuildNodeDependencies();
 
-        $this->components->info('Installing and building Node dependencies.');
-
-        if (file_exists(base_path('pnpm-lock.yaml'))) {
-            $this->runCommands(['pnpm install', 'pnpm run build']);
-        } elseif (file_exists(base_path('yarn.lock'))) {
-            $this->runCommands(['yarn install', 'yarn run build']);
-        } else {
-            $this->runCommands(['npm install', 'npm run build']);
-        }
-
+        // Display success message
         $this->line('');
-        $this->components->info('Breeze scaffolding installed successfully.');
+        $this->info('Breeze scaffolding installed successfully.');
+
+        return 0;
+    }
+
+    /**
+     * Copy directories from the stub to the resource directory.
+     *
+     * @param string $stubPath
+     * @param string $stack
+     * @return void
+     */
+    protected function copyDirectories(string $stubPath, string $stack): void
+    {
+        $directories = ['Components', 'Layouts', 'Pages'];
+        collect($directories)->each(fn ($directory) =>
+        (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}", resource_path("js/{$directory}"))
+        );
+        if ($this->option('typescript')) {
+            (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/types", resource_path('js/types'));
+        }
+    }
+
+    /**
+     * Install and build Node dependencies based on the available lock files.
+     *
+     * @return void
+     */
+    protected function installAndBuildNodeDependencies(): void
+    {
+        $commands = [
+            file_exists(base_path('pnpm-lock.yaml')) ? 'pnpm install' : (file_exists(base_path('yarn.lock')) ? 'yarn install' : 'npm install'),
+            'npm run build',
+        ];
+        $this->runCommands($commands);
     }
 
     /**
@@ -224,7 +235,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      * @param string $path
      * @return void
      */
-    protected function replaceInFile($search, $replace, $path): void
+    protected function replaceInFile(string $search, string $replace, string $path): void
     {
         file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
     }
@@ -236,19 +247,16 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      * @param OutputInterface $output
      * @return void
      */
-    protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)
+    protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output): void
     {
         $stack = $input->getArgument('stack');
 
+        // If the selected stack is React or Vue, prompt for optional features
         if (in_array($stack, ['react', 'vue'])) {
             collect(multiselect(
                 label: 'Would you like any optional features?',
-                options: [
-                    'typescript' => 'TypeScript (experimental)',
-                ]
-            ))->each(fn($option) => $input->setOption($option, true));
+                options: ['typescript' => 'TypeScript (experimental)'],
+            ))->each(fn ($option) => $input->setOption($option, true));
         }
-
     }
-
 }

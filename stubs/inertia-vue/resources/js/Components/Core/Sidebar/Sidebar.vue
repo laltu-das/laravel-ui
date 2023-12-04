@@ -6,7 +6,7 @@ defineOptions({
   inheritAttrs: false,
 })
 const attrs = useAttrs()
-const wrapperClasses = twMerge('absolute top-0 left-0 z-40 w-64 h-screen transition-transform', attrs.class as string)
+const wrapperClasses = twMerge('absolute top-0 left-0 z-40 w-64 h-screen transition-transform', attrs.class)
 </script>
 <template>
     <aside v-bind="$attrs" :class="wrapperClasses" aria-label="Sidebar">

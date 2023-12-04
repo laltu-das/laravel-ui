@@ -29,7 +29,7 @@ const {
 
 </script>
 <template>
-    <label>
+    <div>
         <div :class="labelClasses">{{ label }}</div>
         <div :class="wrapperClasses">
             <textarea v-model="model" :rows="rows" :class="textareaClasses" :placeholder="placeholder"></textarea>
@@ -37,5 +37,5 @@ const {
                 <slot name="footer"></slot>
             </div>
         </div>
-    </label>
+    </div>
 </template>
