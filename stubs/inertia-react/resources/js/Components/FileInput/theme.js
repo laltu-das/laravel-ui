@@ -1,6 +1,4 @@
-import type { FlowbiteFileInputTheme } from './FileInput';
-
-export const fileInputTheme: FlowbiteFileInputTheme = {
+export const fileInputTheme = {
   root: {
     base: 'flex',
   },

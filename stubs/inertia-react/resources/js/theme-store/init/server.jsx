@@ -1,12 +1,7 @@
-import { setTheme } from '..';
-import type { CustomFlowbiteTheme } from '../../Components/Flowbite';
+import { setTheme } from ".."
 
-interface Props {
-  theme?: CustomFlowbiteTheme;
-}
+export function ThemeServerInit({ theme }) {
+  setTheme(theme)
 
-export function ThemeServerInit({ theme }: Props) {
-  setTheme(theme);
-
-  return null;
+  return null
 }

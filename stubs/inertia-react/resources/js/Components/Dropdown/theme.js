@@ -1,6 +1,4 @@
-import type { FlowbiteDropdownTheme } from './Dropdown';
-
-export const dropdownTheme: FlowbiteDropdownTheme = {
+export const dropdownTheme = {
   arrowIcon: 'ml-2 h-4 w-4',
   content: 'py-1 focus:outline-none',
   floating: {

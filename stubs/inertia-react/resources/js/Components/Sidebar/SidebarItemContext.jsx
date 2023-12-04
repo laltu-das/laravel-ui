@@ -1,19 +1,16 @@
-'use client';
+"use client"
+import { createContext, useContext } from "react"
 
-import { createContext, useContext } from 'react';
+export const SidebarItemContext = createContext(undefined)
 
-export type SidebarItemContext = {
-  isInsideCollapse: boolean;
-};
-
-export const SidebarItemContext = createContext<SidebarItemContext | undefined>(undefined);
-
-export function useSidebarItemContext(): SidebarItemContext {
-  const context = useContext(SidebarItemContext);
+export function useSidebarItemContext() {
+  const context = useContext(SidebarItemContext)
 
   if (!context) {
-    throw new Error('useSidebarItemContext should be used within the SidebarItemContext provider!');
+    throw new Error(
+        "useSidebarItemContext should be used within the SidebarItemContext provider!"
+    )
   }
 
-  return context;
+  return context
 }

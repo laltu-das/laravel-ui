@@ -1,27 +1,21 @@
-'use client';
+"use client"
+import { twMerge } from "tailwind-merge"
+import { mergeDeep } from "../../helpers/merge-deep"
+import { useTimelineContentContext } from "./TimelineContentContext"
 
-import type { ComponentProps, FC } from 'react';
-import { twMerge } from 'tailwind-merge';
-import { mergeDeep } from '../../helpers/merge-deep';
-import type { DeepPartial } from '../../types';
-import { useTimelineContentContext } from './TimelineContentContext';
+export const TimelineTime = ({
+                               children,
+                               className,
+                               theme: customTheme = {},
+                               ...props
+                             }) => {
+  const { theme: contentTheme } = useTimelineContentContext()
 
-export interface FlowbiteTimelineTimeTheme {
-  base: string;
-}
-
-export interface TimelineTimeProps extends ComponentProps<'time'> {
-  theme?: DeepPartial<FlowbiteTimelineTimeTheme>;
-}
-
-export const TimelineTime: FC<TimelineTimeProps> = ({ children, className, theme: customTheme = {}, ...props }) => {
-  const { theme: contentTheme } = useTimelineContentContext();
-
-  const theme = mergeDeep(contentTheme.time, customTheme);
+  const theme = mergeDeep(contentTheme.time, customTheme)
 
   return (
-    <time className={twMerge(theme.base, className)} {...props}>
-      {children}
-    </time>
-  );
-};
+      <time className={twMerge(theme.base, className)} {...props}>
+        {children}
+      </time>
+  )
+}

@@ -1,6 +1,4 @@
-import type { FlowbiteLabelTheme } from './Label';
-
-export const labelTheme: FlowbiteLabelTheme = {
+export const labelTheme = {
   root: {
     base: 'text-sm font-medium',
     disabled: 'opacity-50',

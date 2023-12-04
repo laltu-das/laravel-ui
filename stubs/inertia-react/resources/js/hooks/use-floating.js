@@ -1,4 +1,3 @@
-import type { ElementProps, Placement, ReferenceType, UseRoleProps } from '@floating-ui/react';
 import {
   autoUpdate,
   safePolygon,
@@ -7,54 +6,39 @@ import {
   useFloating,
   useHover,
   useInteractions,
-  useRole,
-} from '@floating-ui/react';
-import type { Dispatch, RefObject, SetStateAction } from 'react';
-import { getMiddleware, getPlacement } from '../Components/Floating/helpers';
+  useRole
+} from "@floating-ui/react"
+import { getMiddleware, getPlacement } from "../Components/Floating/helpers"
 
-export type UseBaseFloatingParams = {
-  placement?: 'auto' | Placement;
-  open: boolean;
-  arrowRef?: RefObject<HTMLDivElement>;
-  setOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-export const useBaseFLoating = <Type extends ReferenceType>({
-  open,
-  arrowRef,
-  placement = 'top',
-  setOpen,
-}: UseBaseFloatingParams) => {
-  return useFloating<Type>({
+export const useBaseFLoating = ({
+                                  open,
+                                  arrowRef,
+                                  placement = "top",
+                                  setOpen
+                                }) => {
+  return useFloating({
     placement: getPlacement({ placement }),
     open,
     onOpenChange: setOpen,
     whileElementsMounted: autoUpdate,
-    middleware: getMiddleware({ placement, arrowRef }),
-  });
-};
-
-export type UseFloatingInteractionsParams = {
-  context: ReturnType<typeof useFloating>['context'];
-  trigger?: 'hover' | 'click';
-  role?: UseRoleProps['role'];
-  interactions?: ElementProps[];
-};
+    middleware: getMiddleware({ placement, arrowRef })
+  })
+}
 
 export const useFloatingInteractions = ({
-  context,
-  trigger,
-  role = 'tooltip',
-  interactions = [],
-}: UseFloatingInteractionsParams) => {
+                                          context,
+                                          trigger,
+                                          role = "tooltip",
+                                          interactions = []
+                                        }) => {
   return useInteractions([
-    useClick(context, { enabled: trigger === 'click' }),
+    useClick(context, { enabled: trigger === "click" }),
     useHover(context, {
-      enabled: trigger === 'hover',
-      handleClose: safePolygon(),
+      enabled: trigger === "hover",
+      handleClose: safePolygon()
     }),
     useDismiss(context),
     useRole(context, { role }),
-    ...interactions,
-  ]);
-};
+    ...interactions
+  ])
+}

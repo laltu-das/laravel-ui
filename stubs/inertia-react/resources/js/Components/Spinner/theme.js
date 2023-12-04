@@ -1,6 +1,4 @@
-import type { FlowbiteSpinnerTheme } from './Spinner';
-
-export const spinnerTheme: FlowbiteSpinnerTheme = {
+export const spinnerTheme = {
   base: 'inline animate-spin text-gray-200',
   color: {
     failure: 'fill-red-600',

@@ -1,6 +1,4 @@
-import type { FlowbiteTextareaTheme } from './Textarea';
-
-export const textareaTheme: FlowbiteTextareaTheme = {
+export const textareaTheme = {
   base: 'block w-full rounded-lg border disabled:cursor-not-allowed disabled:opacity-50 text-sm',
   colors: {
     gray: 'bg-gray-50 border-gray-300 text-gray-900 focus:border-cyan-500 focus:ring-cyan-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-cyan-500 dark:focus:ring-cyan-500',

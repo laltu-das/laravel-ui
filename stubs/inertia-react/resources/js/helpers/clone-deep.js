@@ -1,15 +1,15 @@
-import { isObject } from './is-object';
+import { isObject } from "./is-object"
 
-export function cloneDeep<T>(source: T): T {
+export function cloneDeep(source) {
   if (!isObject(source)) {
-    return source;
+    return source
   }
 
-  const output: Record<string, unknown> = {};
+  const output = {}
 
   for (const key in source) {
-    output[key] = cloneDeep(source[key]);
+    output[key] = cloneDeep(source[key])
   }
 
-  return output as T;
+  return output
 }

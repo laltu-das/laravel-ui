@@ -1,6 +1,4 @@
-import type { FlowbiteToggleSwitchTheme } from './ToggleSwitch';
-
-export const toggleSwitchTheme: FlowbiteToggleSwitchTheme = {
+export const toggleSwitchTheme = {
   root: {
     base: 'group relative flex items-center rounded-lg focus:outline-none',
     active: {

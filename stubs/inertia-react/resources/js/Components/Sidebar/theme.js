@@ -1,6 +1,4 @@
-import type { FlowbiteSidebarTheme } from './Sidebar';
-
-export const sidebarTheme: FlowbiteSidebarTheme = {
+export const sidebarTheme = {
   root: {
     base: 'h-full',
     collapsed: {

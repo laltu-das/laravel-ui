@@ -1,14 +1,8 @@
-'use client';
+"use client"
+import { setTheme } from ".."
 
-import { setTheme } from '..';
-import type { CustomFlowbiteTheme } from '../../Components/Flowbite';
+export function ThemeClientInit({ theme }) {
+  setTheme(theme)
 
-interface Props {
-  theme?: CustomFlowbiteTheme;
-}
-
-export function ThemeClientInit({ theme }: Props) {
-  setTheme(theme);
-
-  return null;
+  return null
 }
