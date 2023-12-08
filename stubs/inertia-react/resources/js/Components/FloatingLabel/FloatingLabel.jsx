@@ -1,7 +1,5 @@
 import { forwardRef, useId } from "react"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
 
 export const FloatingLabel = forwardRef(
     (

@@ -1,7 +1,7 @@
 "use client"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { RatingAdvanced } from "./RatingAdvanced"
 import { RatingContext } from "./RatingContext"
 import { RatingStar } from "./RatingStar"

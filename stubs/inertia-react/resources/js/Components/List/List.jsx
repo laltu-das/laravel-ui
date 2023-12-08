@@ -1,7 +1,4 @@
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
-import { ListItem } from "./ListItem"
 
 const ListComponent = ({
                          children,
@@ -30,8 +27,3 @@ const ListComponent = ({
       </Component>
   )
 }
-
-ListComponent.displayName = "List"
-ListItem.displayName = "List.Item"
-
-export const List = Object.assign(ListComponent, { Item: ListItem })

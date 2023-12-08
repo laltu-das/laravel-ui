@@ -1,9 +1,9 @@
 "use client"
 import { HiMoon, HiSun } from "react-icons/hi"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { useThemeMode } from "../../hooks/use-theme-mode"
-import { getTheme } from "../../theme-store"
+
 
 export const DarkThemeToggle = ({
                                   className,

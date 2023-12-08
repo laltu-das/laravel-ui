@@ -1,8 +1,8 @@
 "use client"
 
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { TableBody } from "./TableBody"
 import { TableCell } from "./TableCell"
 import { TableContext } from "./TableContext"

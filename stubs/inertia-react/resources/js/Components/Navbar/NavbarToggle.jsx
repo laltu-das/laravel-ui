@@ -1,7 +1,7 @@
 "use client"
 import { FaBars } from "react-icons/fa"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { useNavbarContext } from "./NavbarContext"
 
 export const NavbarToggle = ({

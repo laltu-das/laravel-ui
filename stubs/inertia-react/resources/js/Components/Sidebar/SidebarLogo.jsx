@@ -1,7 +1,7 @@
 "use client"
 import { useId } from "react"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { useSidebarContext } from "./SidebarContext"
 
 export const SidebarLogo = ({

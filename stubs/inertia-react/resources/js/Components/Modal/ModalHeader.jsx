@@ -2,7 +2,7 @@
 import { useId, useLayoutEffect } from "react"
 import { HiOutlineX } from "react-icons/hi"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { useModalContext } from "./ModalContext"
 
 export const ModalHeader = ({

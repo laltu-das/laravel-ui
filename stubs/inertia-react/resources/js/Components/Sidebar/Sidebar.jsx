@@ -1,7 +1,7 @@
 "use client"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { SidebarCTA } from "./SidebarCTA"
 import { SidebarCollapse } from "./SidebarCollapse"
 import { SidebarContext } from "./SidebarContext"

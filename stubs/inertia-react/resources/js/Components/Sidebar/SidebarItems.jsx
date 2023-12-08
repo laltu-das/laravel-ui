@@ -1,6 +1,6 @@
 "use client"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { useSidebarContext } from "./SidebarContext"
 
 export const SidebarItems = ({

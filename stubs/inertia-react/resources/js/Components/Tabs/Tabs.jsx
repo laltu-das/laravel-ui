@@ -10,8 +10,8 @@ import {
   useState
 } from "react"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { TabItem } from "./TabItem"
 
 const TabsComponent = forwardRef(

@@ -21,12 +21,12 @@ import {
   HiOutlineChevronUp
 } from "react-icons/hi"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import {
   useBaseFLoating,
   useFloatingInteractions
 } from "../../hooks/use-floating"
-import { getTheme } from "../../theme-store"
+
 import { Button } from "../Button"
 import { DropdownContext } from "./DropdownContext"
 import { DropdownDivider } from "./DropdownDivider"

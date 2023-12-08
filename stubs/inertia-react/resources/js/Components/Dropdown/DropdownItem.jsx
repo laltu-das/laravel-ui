@@ -2,7 +2,7 @@
 
 import { useListItem } from "@floating-ui/react"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { useDropdownContext } from "./DropdownContext"
 import { ButtonBase } from "../Button/ButtonBase"
 

@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { AvatarGroup } from "./AvatarGroup"
 import { AvatarGroupCounter } from "./AvatarGroupCounter"
 

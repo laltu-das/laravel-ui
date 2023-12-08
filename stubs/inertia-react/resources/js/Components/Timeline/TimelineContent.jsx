@@ -1,6 +1,6 @@
 "use client"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { TimelineContentContext } from "./TimelineContentContext"
 import { useTimelineContext } from "./TimelineContext"
 import { useTimelineItemContext } from "./TimelineItemContext"

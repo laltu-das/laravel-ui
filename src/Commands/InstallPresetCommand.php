@@ -5,6 +5,7 @@ namespace Laltu\LaravelUi\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
@@ -35,7 +36,8 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     {
         // Remove node_modules directory and lock files
         (new Filesystem)->deleteDirectory(base_path('node_modules'));
-        collect(['yarn.lock', 'package-lock.json'])->each(fn ($file) => (new Filesystem)->delete(base_path($file)));
+
+        collect(['yarn.lock', 'package-lock.json'])->each(fn($file) => (new Filesystem)->delete(base_path($file)));
     }
 
     /**
@@ -66,22 +68,23 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     protected function installInertiaVueStack(): int
     {
         // Update NPM packages for Vue stack
-        $this->updateNodePackages(fn ($packages) => [
+        $this->updateNodePackages(fn($packages) => [
             "@vueuse/core" => "^10.6.1",
             "classnames" => "^2.3.2",
             "floating-vue" => "^2.0.0-beta.24",
             "lodash-es" => "^4.17.21",
             "tailwind-merge" => "^2.0.0",
+            "nanoid" => "^5.0.4"
         ]);
 
         // Update additional NPM packages for Vue stack
-        $this->updateNodePackages(fn ($packages) => [
+        $this->updateNodePackages(fn($packages) => [
             "laravel-precognition-vue-inertia" => "^0.5.2"
         ], false);
 
         // Ensure existence of required directories
-        collect(['Components', 'Layouts', 'Pages'])->each(fn ($directory) =>
-        (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}"))
+        collect(['Components', 'Layouts', 'Pages'])->each(
+            fn($directory) => (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}"))
         );
 
         // Copy Vue stub files to the resource directory
@@ -148,13 +151,13 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
             try {
                 $process->setTty(true);
-            } catch (\RuntimeException $e) {
+            } catch (RuntimeException $e) {
                 $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
             }
         }
 
         // Run the process and display the output
-        $process->run(fn ($type, $line) => $this->output->write('    ' . $line));
+        $process->run(fn($type, $line) => $this->output->write('    ' . $line));
     }
 
     /**
@@ -165,7 +168,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     protected function installInertiaReactStack(): int
     {
         // Update NPM packages for React stack
-        $this->updateNodePackages(fn ($packages) => [
+        $this->updateNodePackages(fn($packages) => [
             '@headlessui/react' => '^1.4.2',
             '@inertiajs/react' => '^1.0.0',
             '@tailwindcss/forms' => '^0.5.3',
@@ -178,8 +181,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         ]);
 
         // Ensure existence of required directories
-        collect(['Components', 'Layouts', 'Pages'])->each(fn ($directory) =>
-        (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}"))
+        collect(['Components', 'Layouts', 'Pages'])->each(fn($directory) => (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}"))
         );
 
         // Copy React stub files to the resource directory
@@ -205,8 +207,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     protected function copyDirectories(string $stubPath, string $stack): void
     {
         $directories = ['Components', 'Layouts', 'Pages'];
-        collect($directories)->each(fn ($directory) =>
-        (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}", resource_path("js/{$directory}"))
+        collect($directories)->each(fn($directory) => (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}", resource_path("js/{$directory}"))
         );
         if ($this->option('typescript')) {
             (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/types", resource_path('js/types'));
@@ -256,7 +257,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
             collect(multiselect(
                 label: 'Would you like any optional features?',
                 options: ['typescript' => 'TypeScript (experimental)'],
-            ))->each(fn ($option) => $input->setOption($option, true));
+            ))->each(fn($option) => $input->setOption($option, true));
         }
     }
 }

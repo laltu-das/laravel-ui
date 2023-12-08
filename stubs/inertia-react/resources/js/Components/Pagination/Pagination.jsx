@@ -1,7 +1,7 @@
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { PaginationButton, PaginationNavigation } from "./PaginationButton"
 import { range } from "./helpers"
 

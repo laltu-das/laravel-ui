@@ -1,7 +1,7 @@
 "use client"
 import { forwardRef, useId } from "react"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { Badge } from "../Badge"
 import { Tooltip } from "../Tooltip"
 import { useSidebarContext } from "./SidebarContext"

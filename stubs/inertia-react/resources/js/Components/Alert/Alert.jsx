@@ -1,7 +1,7 @@
 import { HiX } from "react-icons/hi"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 
 export const Alert = ({
                         additionalContent,

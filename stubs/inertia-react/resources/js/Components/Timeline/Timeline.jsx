@@ -1,8 +1,8 @@
 "use client"
 
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { TimelineBody } from "./TimelineBody"
 import { TimelineContent } from "./TimelineContent"
 import { TimelineContext } from "./TimelineContext"

@@ -12,8 +12,8 @@ import {
 } from "@floating-ui/react"
 import { forwardRef, useState } from "react"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { ModalBody } from "./ModalBody"
 import { ModalContext } from "./ModalContext"
 import { ModalFooter } from "./ModalFooter"

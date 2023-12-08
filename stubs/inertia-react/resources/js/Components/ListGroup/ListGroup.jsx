@@ -1,6 +1,6 @@
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
-import { getTheme } from "../../theme-store"
+
+
 import { ListGroupItem } from "./ListGroupItem"
 
 const ListGroupComponent = ({
@@ -17,10 +17,3 @@ const ListGroupComponent = ({
       </ul>
   )
 }
-
-ListGroupComponent.displayName = "ListGroup"
-ListGroupItem.displayName = "ListGroup.Item"
-
-export const ListGroup = Object.assign(ListGroupComponent, {
-  Item: ListGroupItem
-})

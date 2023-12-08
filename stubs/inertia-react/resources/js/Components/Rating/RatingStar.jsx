@@ -1,7 +1,7 @@
 "use client"
 import { HiStar } from "react-icons/hi"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { useRatingContext } from "./RatingContext"
 
 export const RatingStar = ({

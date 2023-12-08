@@ -2,7 +2,7 @@
 import { useEffect, useId, useState } from "react"
 import { HiChevronDown } from "react-icons/hi"
 import { twMerge } from "tailwind-merge"
-import { mergeDeep } from "../../helpers/merge-deep"
+
 import { Tooltip } from "../Tooltip"
 import { useSidebarContext } from "./SidebarContext"
 import { SidebarItemContext } from "./SidebarItemContext"
