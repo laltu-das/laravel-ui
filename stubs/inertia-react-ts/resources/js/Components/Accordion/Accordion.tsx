@@ -73,14 +73,3 @@ const AccordionComponent: FC<AccordionProps> = ({
     </div>
   );
 };
-
-AccordionComponent.displayName = 'Accordion';
-AccordionPanel.displayName = 'Accordion.Panel';
-AccordionTitle.displayName = 'Accordion.Title';
-AccordionContent.displayName = 'Accordion.Content';
-
-export const Accordion = Object.assign(AccordionComponent, {
-  Panel: AccordionPanel,
-  Title: AccordionTitle,
-  Content: AccordionContent,
-});
