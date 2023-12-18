@@ -1,14 +1,3 @@
-<template>
-  <div ref="header">
-    <button v-if="isLoaded" type="button" @click="toggleItem" :class="headerClasses">
-      <span class="w-full"><slot /></span>
-      <svg data-accordion-icon :class="arrowClasses" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
-      </svg>
-    </button>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { useAccordionState } from '@/Components/Core/Accordion/useAccordionState'
 import { computed, onMounted, ref, type ComputedRef } from 'vue'
@@ -47,3 +36,13 @@ onMounted(() => {
   isLoaded.value = true
 })
 </script>
+<template>
+  <div ref="header">
+    <button v-if="isLoaded" type="button" @click="toggleItem" :class="headerClasses">
+      <span class="w-full"><slot /></span>
+      <svg data-accordion-icon :class="arrowClasses" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"></path>
+      </svg>
+    </button>
+  </div>
+</template>

@@ -1,9 +1,3 @@
-<template>
-  <div :data-panel-id="panelId" ref="panel">
-    <slot v-if="accordionId"></slot>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue'
 import { useAccordionState } from '@/Components/Core/Accordion/useAccordionState'
@@ -31,3 +25,8 @@ onMounted(() => {
   }
 })
 </script>
+<template>
+  <div :data-panel-id="panelId" ref="panel">
+    <slot v-if="accordionId"></slot>
+  </div>
+</template>

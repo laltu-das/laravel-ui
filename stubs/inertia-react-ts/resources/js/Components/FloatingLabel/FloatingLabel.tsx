@@ -66,5 +66,3 @@ export const FloatingLabel = forwardRef<HTMLInputElement, FloatingLabelProps>(
     );
   },
 );
-
-FloatingLabel.displayName = 'FloatingLabel';

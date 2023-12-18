@@ -9,11 +9,8 @@ import { getTheme } from '../../theme-store';
 import type { DeepPartial } from '../../types';
 import type { FlowbiteBoolean } from '../Flowbite';
 import type { FlowbiteAccordionComponentTheme } from './AccordionContent';
-import { AccordionContent } from './AccordionContent';
 import type { AccordionPanelProps } from './AccordionPanel';
-import { AccordionPanel } from './AccordionPanel';
 import type { FlowbiteAccordionTitleTheme } from './AccordionTitle';
-import { AccordionTitle } from './AccordionTitle';
 
 export interface FlowbiteAccordionTheme {
   root: FlowbiteAccordionRootTheme;

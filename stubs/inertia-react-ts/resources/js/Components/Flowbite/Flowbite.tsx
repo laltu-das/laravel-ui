@@ -21,5 +21,3 @@ export const Flowbite: FC<FlowbiteProps> = ({ children, theme }) => {
     </>
   );
 };
-
-Flowbite.displayName = 'Flowbite';

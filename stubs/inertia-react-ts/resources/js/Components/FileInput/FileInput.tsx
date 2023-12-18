@@ -59,5 +59,3 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
     );
   },
 );
-
-FileInput.displayName = 'FileInput';

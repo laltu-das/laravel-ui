@@ -1,14 +1,3 @@
-<template>
-  <div ref="content">
-    <div
-        v-if="isLoaded"
-        :class="contentClasses"
-    >
-      <slot />
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
 import { useAccordionContentClasses } from '@/Components/Core/Accordion/useAccordionContentClasses'
 import { onMounted, ref } from 'vue'
@@ -23,3 +12,13 @@ onMounted(() => {
   isLoaded.value = true
 })
 </script>
+<template>
+  <div ref="content">
+    <div
+        v-if="isLoaded"
+        :class="contentClasses"
+    >
+      <slot />
+    </div>
+  </div>
+</template>

@@ -1,9 +1,3 @@
-<template>
-  <component :is="wrapperType" :class="badgeClasses" :href="href">
-    <slot name="icon" />
-    <slot name="default" />
-  </component>
-</template>
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue'
 import type { BadgeType, BadgeSize } from './types'
@@ -26,3 +20,9 @@ const wrapperType = computed(() => (props.href ? 'a' : 'span'))
 
 const { badgeClasses } = useBadgeClasses(props, { isContentEmpty })
 </script>
+<template>
+  <component :is="wrapperType" :class="badgeClasses" :href="href">
+    <slot name="icon" />
+    <slot name="default" />
+  </component>
+</template>
