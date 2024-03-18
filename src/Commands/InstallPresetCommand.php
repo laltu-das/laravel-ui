@@ -6,7 +6,9 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
 use RuntimeException;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use function Laravel\Prompts\multiselect;
@@ -18,7 +20,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $signature = 'laravel-ui:preset {stack : The development stack that should be installed (react,vue)} {--typescript : Indicates if TypeScript is preferred for the Inertia stack (Experimental)}';
+    protected $name = 'laravel-ui:preset';
 
     /**
      * The console command description.
@@ -26,6 +28,22 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      * @var string
      */
     protected $description = 'Install the Breeze controllers and resources';
+
+    // Define the command's arguments
+    protected function getArguments(): array
+    {
+        return [
+            ['stack', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
+        ];
+    }
+
+    // Define the command's options
+    protected function getOptions(): array
+    {
+        return [
+            ['typescript', null, InputOption::VALUE_NONE, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
+        ];
+    }
 
     /**
      * Delete the "node_modules" directory and remove the associated lock files.
