@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\select;
 
 class InstallPresetCommand extends Command implements PromptsForMissingInput
 {
@@ -270,12 +271,29 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     {
         $stack = $input->getArgument('stack');
 
-        // If the selected stack is React or Vue, prompt for optional features
         if (in_array($stack, ['react', 'vue'])) {
             collect(multiselect(
                 label: 'Would you like any optional features?',
-                options: ['typescript' => 'TypeScript (experimental)'],
+                options: [
+                    'js' => 'Core js',
+                    'typescript' => 'TypeScript (experimental)'
+                ],
             ))->each(fn($option) => $input->setOption($option, true));
         }
+    }
+
+    /**
+     * Prompt for missing input arguments using the returned questions.
+     *
+     * @return array<string, string>
+     */
+    protected function promptForMissingArgumentsUsing(): array
+    {
+        return [
+            'stack' => fn () => select(
+                'The development stack that should be installed (react,vue)?',
+                ['react', 'vue', 'livewire'],
+            ),
+        ];
     }
 }
