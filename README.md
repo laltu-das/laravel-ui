@@ -1,11 +1,10 @@
-# Very short description of the package
+# Laravel UI
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/laltu/laravel-ui.svg?style=flat-square)](https://packagist.org/packages/laltu/laravel-ui)
 [![Total Downloads](https://img.shields.io/packagist/dt/laltu/laravel-ui.svg?style=flat-square)](https://packagist.org/packages/laltu/laravel-ui)
-![GitHub Actions](https://github.com/laltu/laravel-ui/actions/workflows/main.yml/badge.svg)
+![License](https://img.shields.io/packagist/l/laltu/laravel-ui)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
-
+It's designed to streamline the process of setting up frontend scaffolding within a Laravel application, specifically targeting the integration of Breeze with Inertia.js alongside React or Vue.js stacks.
 ## Installation
 
 You can install the package via composer:
@@ -17,13 +16,7 @@ composer require laltu/laravel-ui
 ## Usage
 
 ```php
-// Usage description here
-```
-
-### Testing
-
-```bash
-composer test
+php artisan laravel-ui:preset
 ```
 
 ### Changelog
@@ -46,7 +39,3 @@ If you discover any security related issues, please email laltu.lspl@gmail.com i
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
