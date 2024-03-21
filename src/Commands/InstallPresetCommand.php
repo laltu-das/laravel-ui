@@ -34,7 +34,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     protected function getArguments(): array
     {
         return [
-            ['stack', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
+            ['framework', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
         ];
     }
 
@@ -42,7 +42,8 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     protected function getOptions(): array
     {
         return [
-            ['typescript', null, InputOption::VALUE_NONE, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
+            ['stack', null, InputOption::VALUE_OPTIONAL, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
+            ['components', null, InputOption::VALUE_OPTIONAL, 'Select your necessary components'],
         ];
     }
 
@@ -67,16 +68,16 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     public function handle(): ?int
     {
         // Get the specified stack (react, vue) from command argument
-        $stack = $this->argument('stack');
+        $framework = $this->argument('framework');
 
         // Validate stack argument
-        if (!in_array($stack, ['vue', 'react'])) {
+        if (!in_array($framework, ['vue', 'react'])) {
             $this->error('Invalid stack. Supported stacks are [vue] and [react].');
             return 1;
         }
 
         // Call appropriate installation method based on the specified stack
-        return $stack === 'vue' ? $this->installInertiaVueStack() : $this->installInertiaReactStack();
+        return $framework === 'vue' ? $this->installInertiaVueStack() : $this->installInertiaReactStack();
     }
 
     /**
@@ -107,7 +108,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         );
 
         // Copy Vue stub files to the resource directory
-        $this->copyDirectories('inertia-vue' . ($this->option('typescript') ? '-ts' : ''), 'vue');
+        $this->copyDirectories('inertia-vue' . ($this->option('stack')=='typescript' ? '-ts' : ''), 'vue');
 
         // Install and build Node dependencies
         $this->installAndBuildNodeDependencies();
@@ -140,10 +141,13 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         $packages = json_decode(file_get_contents(base_path('package.json')), true);
 
         // Apply the callback to update the specified dependencies
-        $packages[$configurationKey] = $callback(
+        $updatedDependencies = $callback(
             array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : [],
             $configurationKey
         );
+
+        // Merge the updated dependencies with existing ones
+        $packages[$configurationKey] = array_merge($packages[$configurationKey] ?? [], $updatedDependencies);
 
         // Sort dependencies alphabetically
         ksort($packages[$configurationKey]);
@@ -204,7 +208,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         );
 
         // Copy React stub files to the resource directory
-        $this->copyDirectories('inertia-react' . ($this->option('typescript') ? '-ts' : ''), 'react');
+        $this->copyDirectories('inertia-react' . ($this->option('stack')=='typescript' ? '-ts' : ''), 'react');
 
         // Install and build Node dependencies
         $this->installAndBuildNodeDependencies();
@@ -226,12 +230,27 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     protected function copyDirectories(string $stubPath, string $stack): void
     {
         $directories = ['Components', 'Layouts', 'Pages'];
-        collect($directories)->each(fn($directory) => (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}", resource_path("js/{$directory}"))
-        );
-        if ($this->option('typescript')) {
+        $components = $this->option('components');
+
+        collect($directories)->each(function ($directory) use ($components, $stubPath) {
+            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}";
+            $destinationPath = resource_path("js/{$directory}");
+
+            // Copy directory if it's Components
+            if ($directory === 'Components') {
+                collect($components)->each(function ($component) use ($sourcePath, $destinationPath) {
+                    (new Filesystem)->copyDirectory("{$sourcePath}/{$component}", "{$destinationPath}/{$component}");
+                });
+            } else {
+                (new Filesystem)->copyDirectory($sourcePath, $destinationPath);
+            }
+        });
+
+        if ($this->option('stack') == 'typescript') {
             (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/types", resource_path('js/types'));
         }
     }
+
 
     /**
      * Install and build Node dependencies based on the available lock files.
@@ -269,16 +288,19 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output): void
     {
-        $stack = $input->getArgument('stack');
+        $framework = $input->getArgument('framework');
 
-        if (in_array($stack, ['react', 'vue'])) {
-            collect(multiselect(
+        if (in_array($framework, ['react', 'vue'])) {
+            $option = select(
                 label: 'Would you like any optional features?',
                 options: [
                     'js' => 'Core js',
                     'typescript' => 'TypeScript (experimental)'
                 ],
-            ))->each(fn($option) => $input->setOption($option, true));
+                default: 'js'
+            );
+
+            $input->setOption('stack', $option);
         }
     }
 
@@ -291,9 +313,12 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     {
         return [
             'stack' => fn () => select(
-                'The development stack that should be installed (react,vue)?',
-                ['react', 'vue', 'livewire'],
-            ),
+                'The development stack that should be installed?',
+                [
+                    'js' => 'Core js',
+                    'typescript' => 'TypeScript (experimental)'
+                ],
+            )
         ];
     }
 }
