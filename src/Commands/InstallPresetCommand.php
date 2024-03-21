@@ -5,6 +5,7 @@ namespace Laltu\LaravelUi\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
+use Laltu\LaravelUi\LaravelUi;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,21 +31,20 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      */
     protected $description = 'Install the Breeze controllers and resources';
 
-    // Define the command's arguments
-    protected function getArguments(): array
-    {
-        return [
-            ['framework', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
-        ];
-    }
+    protected LaravelUi $laravelUi;
 
-    // Define the command's options
-    protected function getOptions(): array
+    /**
+     * Handle the console command.
+     *
+     * @return int|null
+     */
+    public function handle(): ?int
     {
-        return [
-            ['stack', null, InputOption::VALUE_OPTIONAL, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
-            ['components', null, InputOption::VALUE_OPTIONAL, 'Select your necessary components'],
-        ];
+        // Get the specified stack (react, vue) from command argument
+        $framework = $this->argument('framework');
+
+        // Call appropriate installation method based on the specified stack
+        return $framework === 'vue' ? $this->installInertiaVueStack() : $this->installInertiaReactStack();
     }
 
     /**
@@ -60,25 +60,6 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         collect(['yarn.lock', 'package-lock.json'])->each(fn($file) => (new Filesystem)->delete(base_path($file)));
     }
 
-    /**
-     * Handle the console command.
-     *
-     * @return int|null
-     */
-    public function handle(): ?int
-    {
-        // Get the specified stack (react, vue) from command argument
-        $framework = $this->argument('framework');
-
-        // Validate stack argument
-        if (!in_array($framework, ['vue', 'react'])) {
-            $this->error('Invalid stack. Supported stacks are [vue] and [react].');
-            return 1;
-        }
-
-        // Call appropriate installation method based on the specified stack
-        return $framework === 'vue' ? $this->installInertiaVueStack() : $this->installInertiaReactStack();
-    }
 
     /**
      * Install the Inertia Vue Breeze stack.
@@ -108,7 +89,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         );
 
         // Copy Vue stub files to the resource directory
-        $this->copyDirectories('inertia-vue' . ($this->option('stack')=='typescript' ? '-ts' : ''), 'vue');
+        $this->copyDirectories('inertia-vue' . ($this->option('stack') == 'typescript' ? '-ts' : ''), 'vue');
 
         // Install and build Node dependencies
         $this->installAndBuildNodeDependencies();
@@ -159,6 +140,63 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         );
     }
 
+    protected function copyDirectories(string $stubPath, string $stack): void
+    {
+        $directories = ['Components', 'Layouts'];
+        $selectedComponents = $this->option('components');
+        $filesystem = new Filesystem();
+
+        foreach ($selectedComponents as $component) {
+            $componentPath = resource_path("js/Components/{$component}");
+
+            // Check if component directory exists
+            if ($filesystem->exists($componentPath)) {
+                $overwrite = select("Component {$component} is already installed. Overwrite?", ['yes','no']);
+
+                if (!$overwrite) {
+                    $this->info("Component {$component} installation skipped.");
+                    continue; // Skip to next component
+                }
+                // If overwriting, first delete the existing component directory
+                $filesystem->deleteDirectory($componentPath);
+            }
+
+            // Proceed to install (or reinstall) the component
+            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/Components/{$component}";
+            $destinationPath = resource_path("js/Components/{$component}");
+            $filesystem->copyDirectory($sourcePath, $destinationPath);
+            $this->info("Component {$component} has been installed.");
+        }
+
+        // Handle copying of other directories outside of Components
+        foreach ($directories as $directory) {
+            if ($directory !== 'Components') {
+                $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}";
+                $destinationPath = resource_path("js/{$directory}");
+                $filesystem->copyDirectory($sourcePath, $destinationPath);
+            }
+        }
+
+        // Handle TypeScript stubs if needed
+        if ($this->option('stack') == 'typescript') {
+            $filesystem->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/types", resource_path('js/types'));
+        }
+    }
+
+    /**
+     * Install and build Node dependencies based on the available lock files.
+     *
+     * @return void
+     */
+    protected function installAndBuildNodeDependencies(): void
+    {
+        $commands = [
+            file_exists(base_path('pnpm-lock.yaml')) ? 'pnpm install' : (file_exists(base_path('yarn.lock')) ? 'yarn install' : 'npm install'),
+            'npm run build',
+        ];
+        $this->runCommands($commands);
+    }
+
     /**
      * Run the given shell commands.
      *
@@ -204,11 +242,10 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         ]);
 
         // Ensure existence of required directories
-        collect(['Components', 'Layouts', 'Pages'])->each(fn($directory) => (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}"))
-        );
+        collect(['Components', 'Layouts'])->each(fn($directory) => (new Filesystem)->ensureDirectoryExists(resource_path("js/{$directory}")));
 
         // Copy React stub files to the resource directory
-        $this->copyDirectories('inertia-react' . ($this->option('stack')=='typescript' ? '-ts' : ''), 'react');
+        $this->copyDirectories('inertia-react' . ($this->option('stack') == 'typescript' ? '-ts' : ''), 'react');
 
         // Install and build Node dependencies
         $this->installAndBuildNodeDependencies();
@@ -220,50 +257,19 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         return 0;
     }
 
-    /**
-     * Copy directories from the stub to the resource directory.
-     *
-     * @param string $stubPath
-     * @param string $stack
-     * @return void
-     */
-    protected function copyDirectories(string $stubPath, string $stack): void
+    protected function getArguments(): array
     {
-        $directories = ['Components', 'Layouts', 'Pages'];
-        $components = $this->option('components');
-
-        collect($directories)->each(function ($directory) use ($components, $stubPath) {
-            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}";
-            $destinationPath = resource_path("js/{$directory}");
-
-            // Copy directory if it's Components
-            if ($directory === 'Components') {
-                collect($components)->each(function ($component) use ($sourcePath, $destinationPath) {
-                    (new Filesystem)->copyDirectory("{$sourcePath}/{$component}", "{$destinationPath}/{$component}");
-                });
-            } else {
-                (new Filesystem)->copyDirectory($sourcePath, $destinationPath);
-            }
-        });
-
-        if ($this->option('stack') == 'typescript') {
-            (new Filesystem)->copyDirectory(__DIR__ . "/../../stubs/{$stubPath}/resources/js/types", resource_path('js/types'));
-        }
+        return [
+            ['framework', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
+        ];
     }
 
-
-    /**
-     * Install and build Node dependencies based on the available lock files.
-     *
-     * @return void
-     */
-    protected function installAndBuildNodeDependencies(): void
+    protected function getOptions(): array
     {
-        $commands = [
-            file_exists(base_path('pnpm-lock.yaml')) ? 'pnpm install' : (file_exists(base_path('yarn.lock')) ? 'yarn install' : 'npm install'),
-            'npm run build',
+        return [
+            ['stack', null, InputOption::VALUE_OPTIONAL, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
+            ['components', null, InputOption::VALUE_OPTIONAL, 'Select your necessary components'],
         ];
-        $this->runCommands($commands);
     }
 
     /**
@@ -302,7 +308,45 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
 
             $input->setOption('stack', $option);
         }
+
+        $input->setOption('components', multiselect(
+            label: 'The development stack that should be installed?',
+            options: [
+                'Accordion' => 'Accordion',
+                'Alert' => 'Alert',
+                'Avatar' => 'Avatar',
+                'Badge' => 'Badge',
+                'Breadcrumb' => 'Breadcrumb',
+                'Button' => 'Button',
+                'ButtonGroup' => 'ButtonGroup',
+                'Card' => 'Card',
+                'Carousel' => 'Carousel',
+                'Checkbox' => 'Checkbox',
+                'Dropdown' => 'Dropdown',
+                'Footer' => 'Footer',
+                'Form' => 'Form',
+                'ListGroup' => 'ListGroup',
+                'Modal' => 'Modal',
+                'Navbar' => 'Navbar',
+                'Pagination' => 'Pagination',
+                'Progress' => 'Progress',
+                'Radio' => 'Radio',
+                'Range' => 'Range',
+                'Rating' => 'Rating',
+                'Select' => 'Select',
+                'Sidebar' => 'Sidebar',
+                'Spinner' => 'Spinner',
+                'Table' => 'Table',
+                'Textarea' => 'Textarea',
+                'Timeline' => 'Timeline',
+                'Toast' => 'Toast',
+                'Toggle' => 'Toggle',
+                'Tooltip' => 'Tooltip',
+                'Typography' => 'Typography'
+            ],
+        ));
     }
+
 
     /**
      * Prompt for missing input arguments using the returned questions.
@@ -312,13 +356,14 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
     protected function promptForMissingArgumentsUsing(): array
     {
         return [
-            'stack' => fn () => select(
-                'The development stack that should be installed?',
-                [
-                    'js' => 'Core js',
-                    'typescript' => 'TypeScript (experimental)'
+            'framework' => fn() => select(
+                label: 'The development stack that should be installed (react,vue)',
+                options: [
+                    'react' => 'react js',
+                    'vue' => 'vue js'
                 ],
-            )
+                scroll: 6,
+            ),
         ];
     }
 }
