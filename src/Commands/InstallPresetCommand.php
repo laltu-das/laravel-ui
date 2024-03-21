@@ -5,7 +5,6 @@ namespace Laltu\LaravelUi\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
-use Laltu\LaravelUi\LaravelUi;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,7 +30,20 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      */
     protected $description = 'Install the Breeze controllers and resources';
 
-    protected LaravelUi $laravelUi;
+    protected function getArguments(): array
+    {
+        return [
+            ['framework', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            ['stack', null, InputOption::VALUE_OPTIONAL, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
+            ['components', null, InputOption::VALUE_OPTIONAL, 'Select your necessary components'],
+        ];
+    }
 
     /**
      * Handle the console command.
@@ -255,21 +267,6 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         $this->info('Breeze scaffolding installed successfully.');
 
         return 0;
-    }
-
-    protected function getArguments(): array
-    {
-        return [
-            ['framework', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
-        ];
-    }
-
-    protected function getOptions(): array
-    {
-        return [
-            ['stack', null, InputOption::VALUE_OPTIONAL, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
-            ['components', null, InputOption::VALUE_OPTIONAL, 'Select your necessary components'],
-        ];
     }
 
     /**
