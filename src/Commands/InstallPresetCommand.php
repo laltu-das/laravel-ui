@@ -159,7 +159,7 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         $filesystem = new Filesystem();
 
         foreach ($selectedComponents as $component) {
-            $componentPath = resource_path("js/Components/{$component}");
+            $componentPath = resource_path("js/Components/Core/{$component}");
 
             // Check if component directory exists
             if ($filesystem->exists($componentPath)) {
@@ -174,8 +174,8 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
             }
 
             // Proceed to install (or reinstall) the component
-            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/Components/{$component}";
-            $destinationPath = resource_path("js/Components/{$component}");
+            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/Components/Core/{$component}";
+            $destinationPath = resource_path("js/Components/Core/{$component}");
             $filesystem->copyDirectory($sourcePath, $destinationPath);
             $this->info("Component {$component} has been installed.");
         }
