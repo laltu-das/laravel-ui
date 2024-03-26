@@ -30,19 +30,17 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
      */
     protected $description = 'Install the Breeze controllers and resources';
 
-    protected function getArguments(): array
+    /**
+     * Delete the "node_modules" directory and remove the associated lock files.
+     *
+     * @return void
+     */
+    protected static function flushNodeModules(): void
     {
-        return [
-            ['framework', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
-        ];
-    }
+        // Remove node_modules directory and lock files
+        (new Filesystem)->deleteDirectory(base_path('node_modules'));
 
-    protected function getOptions(): array
-    {
-        return [
-            ['stack', null, InputOption::VALUE_OPTIONAL, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
-            ['components', null, InputOption::VALUE_OPTIONAL, 'Select your necessary components'],
-        ];
+        collect(['yarn.lock', 'package-lock.json'])->each(fn($file) => (new Filesystem)->delete(base_path($file)));
     }
 
     /**
@@ -58,20 +56,6 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         // Call appropriate installation method based on the specified stack
         return $framework === 'vue' ? $this->installInertiaVueStack() : $this->installInertiaReactStack();
     }
-
-    /**
-     * Delete the "node_modules" directory and remove the associated lock files.
-     *
-     * @return void
-     */
-    protected static function flushNodeModules(): void
-    {
-        // Remove node_modules directory and lock files
-        (new Filesystem)->deleteDirectory(base_path('node_modules'));
-
-        collect(['yarn.lock', 'package-lock.json'])->each(fn($file) => (new Filesystem)->delete(base_path($file)));
-    }
-
 
     /**
      * Install the Inertia Vue Breeze stack.
@@ -154,16 +138,19 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
 
     protected function copyDirectories(string $stubPath, string $stack): void
     {
-        $directories = ['Components', 'Layouts'];
+        $directories = [];
         $selectedComponents = $this->option('components');
+        $selectedLayout = $this->option('layout');
         $filesystem = new Filesystem();
 
         foreach ($selectedComponents as $component) {
+
+            /*For Components*/
             $componentPath = resource_path("js/Components/Core/{$component}");
 
             // Check if component directory exists
             if ($filesystem->exists($componentPath)) {
-                $overwrite = select("Component {$component} is already installed. Overwrite?", ['yes','no']);
+                $overwrite = select("Component {$component} is already installed. Overwrite?", ['yes', 'no']);
 
                 if (!$overwrite) {
                     $this->info("Component {$component} installation skipped.");
@@ -174,19 +161,60 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
             }
 
             // Proceed to install (or reinstall) the component
-            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/Components/Core/{$component}";
+            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/Components/{$component}";
             $destinationPath = resource_path("js/Components/Core/{$component}");
             $filesystem->copyDirectory($sourcePath, $destinationPath);
             $this->info("Component {$component} has been installed.");
+
+            /*For Composable*/
+            $composablePath = resource_path("js/Composable/Core/{$component}");
+            // Check if Composable directory exists
+            if ($filesystem->exists($composablePath)) {
+                $overwrite = select("Composable {$component} is already installed. Overwrite?", ['yes', 'no']);
+
+                if (!$overwrite) {
+                    $this->info("Composable {$component} installation skipped.");
+                    continue; // Skip to next component
+                }
+                // If overwriting, first delete the existing Composable directory
+                $filesystem->deleteDirectory($composablePath);
+            }
+
+            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/Composables/{$component}";
+            if ($filesystem->exists($sourcePath)) {
+                // Proceed to install (or reinstall) the Composable
+                $destinationPath = resource_path("js/Composables/Core/{$component}");
+                $filesystem->copyDirectory($sourcePath, $destinationPath);
+                $this->info("Composables {$component} has been installed.");
+            }
         }
 
+        if ($selectedLayout) {
+
+            $layoutPath = resource_path("js/Layouts/AdminLayout.vue");
+
+            // Check if layout directory exists
+            if ($filesystem->exists($layoutPath)) {
+                $overwrite = select("Admin Layout is already installed. Overwrite?", ['yes', 'no']);
+
+                if (!$overwrite) {
+                    $this->info("Admin Layout installation skipped.");
+                    exit(); // Skip to next component
+                }
+                // If overwriting, first delete the existing component directory
+                $filesystem->delete($layoutPath);
+            }
+
+            $layoutPath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/Layouts/{$selectedLayout}Layout.vue";
+            $destinationPath = resource_path("js/Layouts/AdminLayout.vue");
+            $filesystem->copy($layoutPath, $destinationPath);
+            $this->info("Admin Layout has been installed.");
+        }
         // Handle copying of other directories outside of Components
         foreach ($directories as $directory) {
-            if ($directory !== 'Components') {
-                $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}";
-                $destinationPath = resource_path("js/{$directory}");
-                $filesystem->copyDirectory($sourcePath, $destinationPath);
-            }
+            $sourcePath = __DIR__ . "/../../stubs/{$stubPath}/resources/js/{$directory}";
+            $destinationPath = resource_path("js/{$directory}");
+            $filesystem->copyDirectory($sourcePath, $destinationPath);
         }
 
         // Handle TypeScript stubs if needed
@@ -269,6 +297,22 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
         return 0;
     }
 
+    protected function getArguments(): array
+    {
+        return [
+            ['framework', InputArgument::REQUIRED, 'The development stack that should be installed (react,vue)'],
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            ['stack', null, InputOption::VALUE_OPTIONAL, 'Indicates if TypeScript is preferred for the Inertia stack (Experimental)'],
+            ['components', null, InputOption::VALUE_OPTIONAL, 'Select your necessary components'],
+            ['layout', null, InputOption::VALUE_OPTIONAL, 'Select your dashboard layout'],
+        ];
+    }
+
     /**
      * Replace a given string within a given file.
      *
@@ -341,6 +385,22 @@ class InstallPresetCommand extends Command implements PromptsForMissingInput
                 'Tooltip' => 'Tooltip',
                 'Typography' => 'Typography'
             ],
+        ));
+
+        $input->setOption('layout', select(
+            label: 'Select your dashboard layout',
+            options: [
+                "DashKit" => "DashKit",
+                "Adminify" => "Adminify",
+                "DashPro" => "DashPro",
+                "AdminGenius" => "AdminGenius",
+                "AdminCraft" => "AdminCraft",
+                "DashSpark" => "DashSpark",
+                "PowerDash" => "PowerDash",
+                "AdminMaster" => "AdminMaster",
+                "ControlPanelX" => "ControlPanelX",
+                "DashForge" => "DashForge"
+            ]
         ));
     }
 
